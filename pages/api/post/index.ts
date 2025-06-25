@@ -18,7 +18,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         data: {
           title,
           content,
-          published: true,
           author: {
             connect: { email: session.user.email }, // ✅ session.user.email is defined
           },
