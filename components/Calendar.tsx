@@ -25,7 +25,7 @@ const PerformanceCalendar: React.FC<Props> = ({ posts }) => {
 const performanceDates = posts.map(post => 
     new Date(post.performanceDate.dateTime).toDateString()
   );
-  console.log("posts in performanceDates", performanceDates)
+  // console.log("posts in performanceDates", performanceDates)
   const tileClassName = ({ date }: { date: Date }) =>
     performanceDates.some(perfDate => isSameDay(perfDate, date)) ? 'highlight' : null;
 
@@ -37,12 +37,13 @@ const performanceDates = posts.map(post =>
   return (
     <div>
       <h2>Performance Calendar</h2>
-      <Calendar
-        // onChange={setValue}
+
+     {/* <Calendar
+        onChange={setValue}
         value={value}
         tileClassName={tileClassName}
         onClickDay={handleDateClick}
-      />
+      /> */}
 
       <style jsx global>{`
         .highlight {

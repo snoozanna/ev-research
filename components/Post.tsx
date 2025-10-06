@@ -1,7 +1,6 @@
 import React from "react";
-import Router from "next/router";
 import ReactMarkdown from "react-markdown";
-import { isSameDay, format } from 'date-fns';
+import { format } from "date-fns";
 
 export type PostProps = {
   id: string;
@@ -35,46 +34,55 @@ export type PostProps = {
 
 const Post: React.FC<{ post: PostProps }> = ({ post }) => {
   const authorName = post.author?.name || "Unknown author";
-  const createdAtDate = post.createdAt;
-    const formattedDate = format(createdAtDate, 'PPpp');
-    const perfDate = post.performanceDate.dateTime;
-    const formattedPerfDate = format(perfDate, 'PPpp');   
-  
+
+  const createdAtDate = new Date(post.createdAt);
+  const formattedDate = format(createdAtDate, "PPpp");
+
+  const formattedPerfDate = post.performanceDate
+    ? format(new Date(post.performanceDate.dateTime), "PPpp")
+    : null;
 
   return (
-    <div>
-      {/* Performance */}
-      {post.performance.name && <h2>{post.performance.name}</h2>}
-    {/* Created at */}
-    {formattedDate && <p>{formattedDate}</p>}
-      {/* Author */}
-      <small>By {authorName}</small>
-
-   
-      {/* Performance Date */}
-      {post.performanceDate && (
-        <p>
-          <strong>Date of performance:</strong>{" "}
-          {formattedPerfDate}
-        </p>
+    <div className="bg-(--post-color) p-6 rounded-lg shadow-md ">
+      {/* Performance Name */}
+      {post.performance?.name && (
+        <h2 className="text-2xl font-bold text-(--fluorescent-cyan)">{post.performance.name}</h2>
       )}
+        {/* Performance Date */}
+        {formattedPerfDate && (
+        <span>
+        On {formattedPerfDate}
+        </span>
+      )}
+
+     
+
+    
+
+    
 
       {/* Free Reflection */}
       {post.content && (
-        <div className="reflection">
-          <h3>Reflection</h3>
-          <ReactMarkdown>{post.content}</ReactMarkdown>
+        <div className="mt-4">
+          <h3 className="text-xl font-semibold mb-2">Reflection</h3>
+          <ReactMarkdown className="prose prose-sm max-w-full" >
+            {post.content}
+          </ReactMarkdown>
         </div>
       )}
 
       {/* Voice Note */}
       {post.voiceNoteUrl && (
         <div
-          className="audio-wrapper"
+          className="mt-4"
           onClick={(e) => e.stopPropagation()}
         >
-          <h3>Voice Note</h3>
-          <audio controls preload="none">
+          <h3 className="text-xl font-semibold mb-2">Voice Note</h3>
+          <audio
+            controls
+            preload="none"
+            className="w-full max-w-md rounded-lg"
+          >
             <source src={post.voiceNoteUrl} type="audio/mpeg" />
             Your browser does not support the audio element.
           </audio>
@@ -83,49 +91,27 @@ const Post: React.FC<{ post: PostProps }> = ({ post }) => {
 
       {/* Prompt Answers */}
       {post.promptAnswers && post.promptAnswers.length > 0 && (
-        <div className="prompt-answers">
-          <h3>Prompt Responses</h3>
+        <div className="mt-4 space-y-4">
+          <h3 className="text-xl font-semibold mb-2">Prompt Responses</h3>
           {post.promptAnswers.map((answer) => (
-            <div key={answer.id} className="prompt-answer">
+            <div
+              key={answer.id}
+              className="border-l-4 border-(--fluorescent-cyan) pl-4 py-2"
+            >
               {answer.prompt?.text && (
-                <p>
-                  <strong>{answer.prompt.text}</strong>
-                </p>
+                <p className="font-semibold">{answer.prompt.text}</p>
               )}
               <p>{answer.text}</p>
             </div>
           ))}
         </div>
+        
       )}
-
-      <style jsx>{`
-        div {
-          color: inherit;
-          padding: 2rem;
-        }
-        h2 {
-          margin-top: 0;
-        }
-        .reflection {
-          margin-top: 1rem;
-        }
-        .audio-wrapper {
-          margin-top: 1rem;
-        }
-        audio {
-          width: 100%;
-          max-width: 400px;
-          border-radius: 12px;
-        }
-        .prompt-answers {
-          margin-top: 1rem;
-        }
-        .prompt-answer {
-          margin-bottom: 1rem;
-          padding: 0.5rem;
-          border-left: 3px solid #ccc;
-        }
-      `}</style>
+       {/* Created At */}
+       <div className="w-full flex flex-col justify-end items-end"><p className="text-sm">{formattedDate}</p>
+       <span className="text-sm">By {authorName}</span></div>
+         {/* Author */}
+     
     </div>
   );
 };

@@ -5,7 +5,6 @@ import Post, { PostProps } from "../components/Post";
 import prisma from "../lib/prisma";
 
 export const getStaticProps: GetStaticProps = async () => {
-
   const feed = await prisma.post.findMany({
     where: { published: true },
     include: {
@@ -18,8 +17,7 @@ export const getStaticProps: GetStaticProps = async () => {
         },
       },
     },
-  
-});
+  });
 
   return {
     props: { feed },
@@ -34,31 +32,20 @@ type Props = {
 const Blog: React.FC<Props> = ({ feed }) => {
   return (
     <Layout>
-      <div className="page">
-        <h1>My Reflections</h1>
-        <main>
+      <div className="container mx-auto px-4 py-8">
+        <h1 className="text-3xl font-bold mb-6">My Reflections</h1>
+
+        <main className="space-y-8">
           {feed.map((post) => (
-            <div key={post.id} className="post">
+            <div
+              key={post.id}
+              className="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow duration-150"
+            >
               <Post post={post} />
             </div>
           ))}
         </main>
       </div>
-
-      <style jsx>{`
-        .post {
-          background: white;
-          transition: box-shadow 0.1s ease-in;
-          padding: 1rem;
-          border-radius: 8px;
-        }
-        .post:hover {
-          box-shadow: 1px 1px 3px #aaa;
-        }
-        .post + .post {
-          margin-top: 2rem;
-        }
-      `}</style>
     </Layout>
   );
 };

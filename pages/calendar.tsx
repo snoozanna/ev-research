@@ -39,13 +39,13 @@ type Props = {
 };
 
 
-const Drafts: React.FC<Props> = ({ myPosts }) => {
+const CalendarPage: React.FC<Props> = ({ myPosts }) => {
   const { data: session } = useSession();
-console.log("myPosts", myPosts)
+// console.log("myPosts", myPosts)
   if (!session) {
     return (
       <Layout>
-        <h1>My Drafts</h1>
+        <h1>My Calendar</h1>
         <div>You need to be authenticated to view this page.</div>
       </Layout>
     );
@@ -56,7 +56,7 @@ console.log("myPosts", myPosts)
       <div className="page">
         <h1>My Calendar</h1>
         <main>
-          {/* <Calendar posts={myPosts}/> */}
+           {/* <Calendar posts={myPosts}/>  */}
         </main>
       </div>
 
@@ -88,4 +88,4 @@ console.log("myPosts", myPosts)
   );
 };
 
-export default Drafts;
+export default CalendarPage;
