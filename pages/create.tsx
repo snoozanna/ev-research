@@ -238,7 +238,7 @@ const Draft: React.FC = () => {
 <Layout>
   <form
     onSubmit={submitData}
-    className="max-w-xl mx-auto p-6 bg-white shadow rounded-lg space-y-6"
+    className="max-w-xl mx-auto p-6 bg-(--uranian-blue) shadow rounded-lg space-y-6"
   >
     <h1 className="text-2xl font-bold text-gray-800">Make Entry</h1>
 
@@ -350,7 +350,7 @@ const Draft: React.FC = () => {
           value={selectedDateId}
           required
           onChange={(e) => setSelectedDateId(e.target.value)}
-          className="w-full rounded border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:outline-none p-2"
+          className="w-full rounded bg-(--offwhite) border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:outline-none p-2"
         >
           <option value="">Select date</option>
           {selectedPerformance.dates.map((d) => (
@@ -370,23 +370,23 @@ const Draft: React.FC = () => {
           <button
             type="button"
             onClick={() => setMode("voice")}
-            className="flex-1 rounded bg-indigo-600 text-white py-2 px-4 hover:bg-indigo-700 focus:outline-none focus:ring focus:ring-indigo-200"
+            className="flex-1 rounded bg-(--button) text-black py-2 px-4 hover:bg-indigo-700 focus:outline-none focus:ring focus:ring-indigo-200"
           >
-            🎤 Record a Voice Note
+            Voice note
           </button>
           <button
             type="button"
             onClick={() => setMode("reflection")}
-            className="flex-1 rounded bg-indigo-600 text-white py-2 px-4 hover:bg-indigo-700 focus:outline-none focus:ring focus:ring-indigo-200"
+            className="flex-1 rounded bg-(--button) text-black py-2 px-4 hover:bg-indigo-700 focus:outline-none focus:ring focus:ring-indigo-200"
           >
-            ✍️ Write a Reflection
+          Written reflection
           </button>
           <button
             type="button"
             onClick={() => setMode("prompts")}
-            className="flex-1 rounded bg-indigo-600 text-white py-2 px-4 hover:bg-indigo-700 focus:outline-none focus:ring focus:ring-indigo-200"
+            className="flex-1 rounded bg-(--button) text-black py-2 px-4 hover:bg-indigo-700 focus:outline-none focus:ring focus:ring-indigo-200"
           >
-            📝 Answer Prompts
+           Answer prompts
           </button>
         </div>
       </div>
@@ -400,7 +400,7 @@ const Draft: React.FC = () => {
           value={content}
           onChange={(e) => setContent(e.target.value)}
           rows={6}
-          className="w-full rounded border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:outline-none p-2"
+          className="w-full rounded bg-(--offwhite) text-(--colordark) border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:outline-none p-2"
         />
       </div>
     )}
@@ -455,7 +455,7 @@ const Draft: React.FC = () => {
                   [p.id]: e.target.value,
                 }))
               }
-              className="w-full rounded border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:outline-none p-2"
+              className="w-full rounded bg-(--offwhite) border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:outline-none p-2"
             />
           </div>
         ))}
@@ -467,7 +467,7 @@ const Draft: React.FC = () => {
         type="submit"
         disabled={mode === "reflection" && !content}
         value="Create"
-        className="w-full rounded bg-indigo-600 text-white py-2 px-4 hover:bg-indigo-700 focus:outline-none focus:ring focus:ring-indigo-200 disabled:opacity-50 disabled:cursor-not-allowed"
+        className="w-full rounded bg-(--button) text-white py-2 px-4 hover:bg-indigo-700 focus:outline-none focus:ring focus:ring-indigo-200 disabled:opacity-50 disabled:cursor-not-allowed"
       />
     )}
   </form>

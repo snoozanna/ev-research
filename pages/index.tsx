@@ -30,6 +30,7 @@ type Props = {
 };
 
 const Blog: React.FC<Props> = ({ feed }) => {
+ 
   return (
     <Layout>
       <div className="container mx-auto px-4 py-8">

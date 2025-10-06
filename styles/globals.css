@@ -7,9 +7,13 @@
     --davys-gray: #525252ff;
     --uranian-blue: #badefcff;
     --fluorescent-cyan: #0affedff;
+    --mutedorange: #f2ba7f;
+    --offwhite: #f7efef;
     --bg: var(--raspberry-rose);
     --color: var(--uranian-blue);
+    --colordark: var(--davys-gray);
     --post-color: var(--purpureus);
+    --button: var(--mutedorange);
   }
 
 html {
