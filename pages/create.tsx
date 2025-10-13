@@ -38,7 +38,6 @@ const Draft: React.FC = () => {
     const fetchPerformances = async () => {
       const res = await fetch("/api/performances"); 
       const data: PerformanceOption[] = await res.json();
-      console.log("data", data)
       setPerformances(data);
     };
     fetchPerformances();

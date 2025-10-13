@@ -80,7 +80,21 @@ const Header: React.FC = () => {
           </>
         )}
       </div>
+      <div className="flex items-center space-x-4">
+                {session && status !== 'loading' && (
+          <>
+            {canSee.create && (
+              <Link href="/create">
+                <button className="flex items-center font-bold hover:bg-gray-100">
+                  <FaPlus className="mr-2" />
+                </button>
+              </Link>
+            )}
 
+            
+          </>
+        )}
+      </div>
       {/* RIGHT SIDE: Create + User Info + Auth */}
       <div className="flex items-center space-x-4">
         {status === 'loading' && <p>Validating session ...</p>}
@@ -96,14 +110,7 @@ const Header: React.FC = () => {
 
         {session && status !== 'loading' && (
           <>
-            {canSee.create && (
-              <Link href="/create">
-                <button className="flex items-center font-bold hover:bg-gray-100">
-                  <FaPlus className="mr-2" />
-                </button>
-              </Link>
-            )}
-
+           
             <div className="flex flex-col items-end">
               <p className="text-sm">{session.user?.name}</p>
               <button
