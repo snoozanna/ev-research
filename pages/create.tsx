@@ -16,6 +16,7 @@ type Mode = "voice" | "reflection" | "prompts" | "";
 
 const Draft: React.FC = () => {
   const [content, setContent] = useState("");
+  const [error, setError] = useState("");
   const [promptAnswers, setPromptAnswers] = useState<Record<string, string>>({});
   const [selectedPerformanceId, setSelectedPerformanceId] = useState<string | "">("");
   const [selectedDateId, setSelectedDateId] = useState<string | "">("");
@@ -81,6 +82,7 @@ const Draft: React.FC = () => {
 
   const submitData = async (e: React.SyntheticEvent) => {
     e.preventDefault();
+    setError(""); // reset previous error
     try {
       const formData = new FormData();
       formData.append("content", content);
@@ -92,10 +94,16 @@ const Draft: React.FC = () => {
       formData.append("promptAnswers", JSON.stringify(promptAnswers));
       if (audioBlob) formData.append("voiceNote", audioBlob, "voice-note.webm");
 
-      await fetch("/api/post", { method: "POST", body: formData });
-      // Router.push("/reflections");
+      const response = await fetch("/api/post", { method: "POST", body: formData });
+
+      if (!response.ok) {
+        throw new Error("Error saving form");
+      }
+  
+      Router.push("/reflections");
     } catch (err) {
       console.error(err);
+      setError("Error saving form");
     }
   };
 
@@ -332,12 +340,15 @@ const Draft: React.FC = () => {
     )}
 
     {mode && (
-      <input
-        type="submit"
-        disabled={mode === "reflection" && !content}
-        value="Create"
-        className="w-full rounded bg-(--button) text-white py-2 px-4 hover:bg-indigo-700 focus:outline-none focus:ring focus:ring-indigo-200 disabled:opacity-50 disabled:cursor-not-allowed"
-      />
+        <>
+           {error && <div className="text-red-600 font-medium mb-2">{error}</div>}
+        <input
+          type="submit"
+          disabled={mode === "reflection" && !content}
+          value="Create"
+          className="w-full rounded bg-(--button) text-white py-2 px-4 hover:bg-indigo-700 focus:outline-none focus:ring focus:ring-indigo-200 disabled:opacity-50 disabled:cursor-not-allowed"
+        />
+        </>
     )}
   </form>
 </Layout>
