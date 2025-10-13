@@ -94,7 +94,7 @@ const Draft: React.FC = () => {
       if (audioBlob) formData.append("voiceNote", audioBlob, "voice-note.webm");
 
       await fetch("/api/post", { method: "POST", body: formData });
-      Router.push("/drafts");
+      Router.push("/reflections");
     } catch (err) {
       console.error(err);
     }

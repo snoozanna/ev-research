@@ -16,24 +16,15 @@ export const authOptions = {
 
   callbacks: {
     async jwt({ token, user }) {
-      // When user signs in for the first time or session refresh
+      // Only fetch from DB on first sign in
       if (user) {
-        // Fetch full user record from DB, since NextAuth user may not include 'role'
         const dbUser = await prisma.user.findUnique({
           where: { email: user.email! },
           select: { role: true },
         });
-        console.log("dbUser?.role ", dbUser?.role )
-        token.role = dbUser?.role ?? "ADMIN";
-      } else if (token?.email) {
-        // For existing sessions, refresh role from DB
-        const dbUser = await prisma.user.findUnique({
-          where: { email: token.email },
-          select: { role: true },
-        });
         token.role = dbUser?.role ?? "ADMIN";
       }
-
+    
       return token;
     },
 
