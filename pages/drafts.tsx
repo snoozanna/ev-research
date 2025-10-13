@@ -1,14 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { GetServerSideProps } from 'next';
 import { useSession, getSession } from 'next-auth/react';
 import Router from 'next/router';
 import Layout from '../components/Layout';
 import Post, { PostProps } from '../components/Post';
 import prisma from '../lib/prisma';
-import { FaPen, FaCheck, FaShareAlt } from 'react-icons/fa';
-import { useState } from 'react';
+import { FaPen, FaShareAlt } from 'react-icons/fa';
 
-// Slider toggle component
 const ShareToggle = ({ postId, initialState }: { postId: string; initialState: boolean }) => {
   const [enabled, setEnabled] = useState(initialState);
 
@@ -42,7 +40,7 @@ const ShareToggle = ({ postId, initialState }: { postId: string; initialState: b
           }`}
         />
       </button>
-      <span className="text-gray-700 select-none">{enabled ? 'Shared' : 'Not Shared'}</span>
+      <span className="text-gray-700 select-none">{enabled ? 'Shared with artist' : 'Not shared with artist'}</span>
     </div>
   );
 };
@@ -71,6 +69,7 @@ type Props = { drafts: PostProps[] };
 
 const Drafts: React.FC<Props> = ({ drafts }) => {
   const { data: session } = useSession();
+  const [draftPosts, setDraftPosts] = useState(drafts);
 
   if (!session) {
     return (
@@ -82,8 +81,22 @@ const Drafts: React.FC<Props> = ({ drafts }) => {
   }
 
   const publishPost = async (id: string) => {
-    await fetch(`/api/publish/${id}`, { method: 'PUT' });
-    Router.reload();
+    const res = await fetch(`/api/publish/${id}`, { method: 'PUT' });
+    if (res.ok) {
+      setDraftPosts((prev) => prev.map(p => p.id === id ? { ...p, published: true } : p));
+    }
+  };
+
+  const deletePost = async (id: string) => {
+    const confirmed = window.confirm("Are you sure you want to delete this post?");
+    if (!confirmed) return;
+
+    const res = await fetch(`/api/post/${id}`, { method: 'DELETE' });
+    if (res.ok) {
+      setDraftPosts((prev) => prev.filter(p => p.id !== id));
+    } else {
+      alert("Failed to delete post");
+    }
   };
 
   return (
@@ -91,7 +104,7 @@ const Drafts: React.FC<Props> = ({ drafts }) => {
       <div className="max-w-3xl mx-auto p-4">
         <h1 className="text-2xl font-bold mb-6">My Personal Feed</h1>
         <main className="space-y-6">
-          {drafts.map((post) => (
+          {draftPosts.map((post) => (
             <div
               key={post.id}
               className="bg-white shadow-sm rounded-lg p-4 hover:shadow-md transition-shadow duration-150"
@@ -99,31 +112,39 @@ const Drafts: React.FC<Props> = ({ drafts }) => {
               <Post post={post} />
 
               <div className="mt-4 flex flex-wrap gap-4 items-center">
-                {/* Publish Button */}
-                <button
-                  onClick={() => publishPost(post.id)}
-                  className={`flex items-center gap-2 px-4 py-2 rounded text-white transition-colors duration-200 focus:outline-none focus:ring focus:ring-indigo-200 ${
-                    post.published ? 'bg-green-600 hover:bg-green-700' : 'bg-blue-600 hover:bg-blue-700'
-                  }`}
-                >
-                  {post.published ? <FaCheck /> : null}
-                  {post.published ? 'Published' : 'Publish publicly'}
-                </button>
-
                 {/* Share Toggle */}
                 <ShareToggle postId={post.id} initialState={post.shareWithArtist ?? false} />
 
                 {/* Edit Post */}
-                <button
+                {/* <button
                   onClick={() => Router.push(`/p/${post.id}`)}
                   className="flex items-center gap-2 px-4 py-2 rounded bg-yellow-500 hover:bg-yellow-600 text-white focus:outline-none focus:ring focus:ring-yellow-200"
                 >
                   <FaPen />
                   Edit Post
+                </button> */}
+
+                {/* Delete Post */}
+                <button
+                  onClick={() => deletePost(post.id)}
+                  className="flex items-center gap-2 px-4 py-2 rounded bg-red-500 hover:bg-red-600 text-white focus:outline-none focus:ring focus:ring-red-200"
+                >
+                  🗑️ Delete Post
                 </button>
+
+                {/* Publish Post */}
+                {/* {!post.published && (
+                  <button
+                    onClick={() => publishPost(post.id)}
+                    className="flex items-center gap-2 px-4 py-2 rounded bg-green-500 hover:bg-green-600 text-white focus:outline-none focus:ring focus:ring-green-200"
+                  >
+                    ✅ Publish
+                  </button>
+                )} */}
               </div>
             </div>
           ))}
+          {draftPosts.length === 0 && <p className="text-gray-500">No drafts available.</p>}
         </main>
       </div>
     </Layout>

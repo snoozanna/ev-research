@@ -43,6 +43,7 @@ const performanceDates = posts.map(post =>
         value={value}
         tileClassName={tileClassName}
         onClickDay={handleDateClick}
+        className="text-black"
       /> */}
 
       <style jsx global>{`

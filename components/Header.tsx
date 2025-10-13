@@ -3,7 +3,7 @@ import React from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { signIn, signOut, useSession } from 'next-auth/react';
-import { FaHome, FaFileAlt, FaCalendarAlt, FaPlus, FaSignOutAlt, FaSignInAlt } from 'react-icons/fa';
+import { FaHome, FaFileAlt, FaCalendarAlt, FaPlus, FaSignOutAlt, FaSignInAlt, FaAnchor } from 'react-icons/fa';
 
 const Header: React.FC = () => {
   const router = useRouter();
@@ -35,6 +35,12 @@ const Header: React.FC = () => {
               className={`flex items-center font-bold ${isActive('/calendar') ? 'text-gray-500' : 'text-gray-900'} hover:text-gray-700`}
             >
               <FaCalendarAlt className="mr-2" />
+            </Link>
+            <Link
+              href="/admin"
+              className={`flex items-center font-bold ${isActive('/admin') ? 'text-gray-500' : 'text-gray-900'} hover:text-gray-700`}
+            >
+              <FaAnchor className="mr-2" />
             </Link>
           </>
         )}

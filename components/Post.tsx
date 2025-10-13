@@ -4,7 +4,7 @@ import { format } from "date-fns";
 
 export type PostProps = {
   id: string;
-  title: string;
+
   createdAt: string;
   performance?: {
     id: string;
@@ -14,6 +14,7 @@ export type PostProps = {
     id: string;
     dateTime: string;
   } | null;
+  performanceId: string;
   author: {
     name: string;
     email: string;
@@ -41,7 +42,7 @@ const Post: React.FC<{ post: PostProps }> = ({ post }) => {
   const formattedPerfDate = post.performanceDate
     ? format(new Date(post.performanceDate.dateTime), "PPpp")
     : null;
-
+console.log("post", post)
   return (
     <div className="bg-(--post-color) p-6 rounded-lg shadow-md ">
       {/* Performance Name */}

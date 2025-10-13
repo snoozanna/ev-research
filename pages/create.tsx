@@ -15,7 +15,6 @@ type PerformanceOption = {
 type Mode = "voice" | "reflection" | "prompts" | "";
 
 const Draft: React.FC = () => {
-  const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [promptAnswers, setPromptAnswers] = useState<Record<string, string>>({});
   const [selectedPerformanceId, setSelectedPerformanceId] = useState<string | "">("");
@@ -85,7 +84,6 @@ const Draft: React.FC = () => {
     e.preventDefault();
     try {
       const formData = new FormData();
-      formData.append("title", title);
       formData.append("content", content);
       formData.append("performanceId", selectedPerformanceId);
       formData.append("performanceDateId", selectedDateId);
@@ -106,135 +104,7 @@ const Draft: React.FC = () => {
   console.log("selectedPerformance", selectedPerformance)
 
   return (
-//     <Layout>
-//       <form onSubmit={submitData}>
-//         <h1>Make entry</h1>
 
-//         {/* STEP 1: Choose performance */}
-//         <label>Performance</label>
-//         <select
-//           value={selectedPerformanceId}
-//           onChange={(e) => {
-//             setSelectedPerformanceId(e.target.value);
-//             setMode(""); // reset mode
-//           }}
-//         >
-//           <option value="">Select performance</option>
-//           {performances.map((p) => (
-//             <option key={p.id} value={p.id}>
-//               {p.name}
-//             </option>
-//           ))}
-//           <option value="custom">Custom Performance</option>
-//         </select>
-
-//         {selectedPerformanceId === "custom" && (
-//           <>
-//             <input
-//               type="text"
-//               placeholder="Performance name"
-//               value={customName}
-//               onChange={(e) => setCustomName(e.target.value)}
-//             />
-//             <input
-//               type="text"
-//               placeholder="Location"
-//               value={customLocation}
-//               onChange={(e) => setCustomLocation(e.target.value)}
-//             />
-//             <input
-//               type="date"
-//               value={customDate}
-//               onChange={(e) => setCustomDate(e.target.value)}
-//             />
-//           </>
-//         )}
-
-//         {selectedPerformance && selectedPerformance.dates.length > 0 && (
-//           <>
-//             <label>Date</label>
-//             <select value={selectedDateId} required onChange={(e) => setSelectedDateId(e.target.value)}>
-//               <option value="">Select date</option>
-//               {selectedPerformance.dates.map((d) => (
-//                 <option key={d.id} value={d.id}>
-//                   {new Date(d.dateTime).toLocaleString()}
-//                 </option>
-//               ))}
-//             </select>
-//           </>
-//         )}
-
-//         {/* STEP 2: Choose reflection type */}
-//         {selectedPerformanceId && (
-//           <div>
-//             <h2>How would you like to reflect?</h2>
-//             <button type="button" onClick={() => setMode("voice")}>
-//               🎤 Record a Voice Note
-//             </button>
-//             <button type="button" onClick={() => setMode("reflection")}>
-//               ✍️ Write a Reflection
-//             </button>
-//             <button type="button" onClick={() => setMode("prompts")}>
-//               📝 Answer Prompts
-//             </button>
-//           </div>
-//         )}
-
-//         {/* STEP 3: Depending on mode */}
-//         {mode === "reflection" && (
-//           <div>
-//             <label>Write your reflection</label>
-//             <textarea value={content} onChange={(e) => setContent(e.target.value)} rows={6} />
-//           </div>
-//         )}
-
-//         {mode === "voice" && (
-//           <div className="voice-section">
-//             <h3>Voice Note</h3>
-//             {!isRecording ? (
-//               <button type="button" onClick={startRecording}>
-//                 🎤 Start Recording
-//               </button>
-//             ) : (
-//               <button type="button" onClick={stopRecording}>
-//                 ⏹ Stop Recording
-//               </button>
-//             )}
-//             {audioUrl && (
-//               <div>
-//                 <audio controls src={audioUrl} />
-//                 <button type="button" onClick={clearRecording}>
-//                   🗑️ Clear
-//                 </button>
-//               </div>
-//             )}
-//           </div>
-//         )}
-
-// {mode === "prompts" && selectedPerformance?.prompts && (
-//   <div>
-//     <h3>Reflection Prompts</h3>
-//     {selectedPerformance.prompts.map((p) => (
-//       <div key={p.id}>
-//         <label>{p.text}</label>
-//         <textarea
-//           rows={3}
-//           value={promptAnswers[p.id] || ""}
-//           onChange={(e) =>
-//             setPromptAnswers((prev) => ({
-//               ...prev,
-//               [p.id]: e.target.value,
-//             }))
-//           }
-//         />
-//       </div>
-//     ))}
-//   </div>
-// )}
-
-//         {mode && <input type="submit" disabled={mode === "reflection" && !content} value="Create" />}
-//       </form>
-//     </Layout>
 <Layout>
   <form
     onSubmit={submitData}

@@ -46,7 +46,19 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       // Extract form fields
       const title = Array.isArray(fields.title) ? fields.title[0] : fields.title;
       const content = Array.isArray(fields.content) ? fields.content[0] : fields.content;
-      const date = Array.isArray(fields.date) ? fields.date[0] : fields.date;
+      const performanceDateId = Array.isArray(fields.performanceDateId)
+      ? fields.performanceDateId[0]
+      : fields.performanceDateId;
+      const performanceId = Array.isArray(fields.performanceId)
+  ? fields.performanceId[0]
+  : fields.performanceId;
+  const promptAnswersRaw = Array.isArray(fields.promptAnswers)
+  ? fields.promptAnswers[0]
+  : fields.promptAnswers;
+    
+    const customName = Array.isArray(fields.customName) ? fields.customName[0] : fields.customName;
+    const customLocation = Array.isArray(fields.customLocation) ? fields.customLocation[0] : fields.customLocation;
+    const customDate = Array.isArray(fields.customDate) ? fields.customDate[0] : fields.customDate;
 
       // Handle voice note file if present
       let voiceNoteUrl: string | null = null;
@@ -66,20 +78,24 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         }
       }
 
-      // Create post in database
-      const performanceDateId = Array.isArray(fields.performanceDateId)
-      ? fields.performanceDateId[0]
-      : fields.performanceDateId;
-    
-    const customName = Array.isArray(fields.customName) ? fields.customName[0] : fields.customName;
-    const customLocation = Array.isArray(fields.customLocation) ? fields.customLocation[0] : fields.customLocation;
-    const customDate = Array.isArray(fields.customDate) ? fields.customDate[0] : fields.customDate;
+      // Handle prompt answers 
+      let promptAnswers: Record<string, string> = {};
+try {
+  promptAnswers = promptAnswersRaw ? JSON.parse(promptAnswersRaw) : {};
+} catch (e) {
+  console.error("Failed to parse promptAnswers", e);
+}
+
+   
     
     const result = await prisma.post.create({
       data: {
         title: title || "",
         content: content || "",
         voiceNoteUrl: voiceNoteUrl || "",
+        performance: performanceId
+        ? { connect: { id: performanceId } }
+        : undefined,
         performanceDate: performanceDateId
           ? { connect: { id: performanceDateId } }
           : undefined,
@@ -89,7 +105,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         author: {
           connect: { email: session.user.email },
         },
+        promptAnswers: {
+          create: Object.entries(promptAnswers)
+            .filter(([_, text]) => text.trim() !== "")
+            .map(([promptId, text]) => ({
+              text,
+              prompt: { connect: { id: promptId } },
+            })),
+        },
       },
+      include: { promptAnswers: true },
     });
 
       res.status(200).json(result);
