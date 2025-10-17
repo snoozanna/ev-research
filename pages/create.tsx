@@ -99,7 +99,7 @@ const Draft: React.FC = () => {
       if (!response.ok) {
         throw new Error("Error saving form");
       }
-  
+     
       Router.push("/reflections");
     } catch (err) {
       console.error(err);
@@ -108,7 +108,7 @@ const Draft: React.FC = () => {
   };
 
   const selectedPerformance = performances.find((p) => p.id === selectedPerformanceId);
-  console.log("selectedPerformance", selectedPerformance)
+  // console.log("selectedPerformance", selectedPerformance)
 
   return (
 

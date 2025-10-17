@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { GetServerSideProps } from 'next';
-import { useSession, getSession } from 'next-auth/react';
+import { getAuth, clerkClient } from '@clerk/nextjs/server';
 import Layout from '../components/Layout';
 import Post, { PostProps } from '../components/Post';
 import prisma from '../lib/prisma';
@@ -8,29 +8,39 @@ import { FaRegTrashAlt } from 'react-icons/fa';
 import { ShareToggle } from '../components/ShareToggle';
 
 export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
-  const session = await getSession({ req });
-  if (!session) {
+  const { userId } = getAuth(req);
+
+  if (!userId) {
     res.statusCode = 403;
-    return { props: { drafts: [] } };
+    return { 
+      props: { drafts: [], isAuthenticated: false } 
+    };
   }
 
   const drafts = await prisma.post.findMany({
-    where: { author: { email: session.user.email } },
+    where: { author: { clerkId: userId } },
     include: {
-      author: { select: { name: true, email: true } },
+      author: { select: { firstName: true, email: true } },
       performance: { select: { id: true, name: true } },
       performanceDate: { select: { id: true, dateTime: true } },
       promptAnswers: { include: { prompt: { select: { id: true, text: true } } } },
     },
   });
 
-  return { props: { drafts } };
+  return { 
+    props: { 
+      drafts,
+      isAuthenticated: true 
+    } 
+  };
 };
 
-type Props = { drafts: PostProps[] };
+type Props = { drafts: PostProps[];
+  isAuthenticated: boolean;
+ };
 
-const Reflections: React.FC<Props> = ({ drafts }) => {
-  const { data: session } = useSession();
+const Reflections: React.FC<Props> = ({ drafts, isAuthenticated }) => {
+
   const [draftPosts, setDraftPosts] = useState(drafts);
 
   // Filter states
@@ -76,7 +86,7 @@ const Reflections: React.FC<Props> = ({ drafts }) => {
   };
 
 
-  if (!session) {
+  if (!isAuthenticated) {
     return (
       <Layout>
         <h1 className="text-2xl font-bold mb-4">My Reflections</h1>

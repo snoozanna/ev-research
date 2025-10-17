@@ -18,3 +18,7 @@ Run:
 
 npx prisma db pull
 npx prisma generate
+
+## testing webhooks
+
+ngrok http 3000

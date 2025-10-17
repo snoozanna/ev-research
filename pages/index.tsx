@@ -1,20 +1,21 @@
 import React from "react";
-import { GetStaticProps } from "next";
 import Layout from "../components/Layout";
-import Post, { PostProps } from "../components/Post";
-import prisma from "../lib/prisma";
 import Link from "next/link";
+import { useUser } from "@clerk/nextjs";
 
 
 
 const Blog: React.FC = () => {
- 
+  const { isSignedIn, user, isLoaded } = useUser();
+  console.log("user", user)
   return (
+    
     <Layout>
       <div className="container mx-auto px-4 py-8">
         <h1 className="text-3xl font-bold mb-6">Home page</h1>
 
         <main className="space-y-8">
+        <div>Hello{isSignedIn && user.firstName + " "}!</div>
          <p> What goes here?</p>
           <Link href="/reflections"
               className={`flex items-center font-bold`}

@@ -6,21 +6,22 @@ import Layout from '../components/Layout';
 import Post, { PostProps } from '../components/Post';
 import prisma from '../lib/prisma';
 import Calendar from "../components/Calendar";
+import { getAuth, clerkClient } from '@clerk/nextjs/server';
 
 export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
-  const session = await getSession({ req });
-  if (!session) {
-    res.statusCode = 403;
-    return { props: { myPosts: [] } };
-  }
+   const { userId } = getAuth(req);
+  
+    if (!userId) {
+      res.statusCode = 403;
+      return { 
+        props: { myPosts: [], isAuthenticated: false } 
+      };
+    }
 
   const myPosts = await prisma.post.findMany({
-    where: {
-      author: { email: session.user.email },
-      // published: false,
-    },
+    where: { author: { clerkId: userId } },
     include: {
-      author: { select: { name: true, email: true } },
+      author: { select: { firstName: true, email: true } },
       performance: { select: { id: true, name: true } },
       performanceDate: { select: { id: true, dateTime: true } },
       promptAnswers: {
@@ -31,25 +32,25 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
     },
   });
 
-  return { props: { myPosts } };
+  return { props: { myPosts,  isAuthenticated: true  } };
 };
 
 type Props = {
   myPosts: PostProps[];
+  isAuthenticated: boolean;
 };
 
 
-const CalendarPage: React.FC<Props> = ({ myPosts }) => {
-  const { data: session } = useSession();
-// console.log("myPosts", myPosts)
-  if (!session) {
-    return (
-      <Layout>
-        <h1>My Calendar</h1>
-        <div>You need to be authenticated to view this page.</div>
-      </Layout>
-    );
-  }
+const CalendarPage: React.FC<Props> = ({ myPosts, isAuthenticated }) => {
+if (!isAuthenticated) {
+  return (
+    <Layout>
+      <h1 className="text-2xl font-bold mb-4">My Calendar</h1>
+      <div className="text-gray-700">You need to be authenticated to view this page.</div>
+    </Layout>
+  );
+}
+
 
   return (
     <Layout>

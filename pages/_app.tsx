@@ -1,6 +1,5 @@
 import "../styles/globals.css";
-
-import { SessionProvider } from 'next-auth/react';
+import { ClerkProvider } from "@clerk/nextjs";
 import { AppProps } from 'next/app';
 
 
@@ -8,11 +7,10 @@ import { AppProps } from 'next/app';
 const App = ({ Component, pageProps }: AppProps) => {
 
   return (
-    <SessionProvider session={pageProps.session}>
-
+    <ClerkProvider {...pageProps}>
       <Component {...pageProps} />
 
-    </SessionProvider>
+    </ClerkProvider>
   );
 };
 

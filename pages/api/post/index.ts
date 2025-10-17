@@ -1,5 +1,4 @@
-import { getServerSession } from "next-auth";
-import { authOptions } from "../auth/[...nextauth]";
+import { getAuth } from '@clerk/nextjs/server'
 import { NextApiRequest, NextApiResponse } from "next";
 import prisma from "../../../lib/prisma";
 import formidable from "formidable";
@@ -19,10 +18,13 @@ export const config = {
   },
 };
 
+
+
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   // Check if user is authenticated
-  const session = await getServerSession(req, res, authOptions);
-  if (!session) {
+  const { userId } = getAuth(req);
+  console.log(userId)
+  if (!userId) {
     return res.status(401).json({ message: "Unauthorized" });
   }
 
@@ -57,13 +59,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       let voiceNoteUrl: string | null = null;
       if (files.voiceNote) {
         const voiceFile = Array.isArray(files.voiceNote) ? files.voiceNote[0] : files.voiceNote;
-        
+       
         if (voiceFile && voiceFile.filepath) {
           try {
             // Upload to Cloudinary
             const uploadResult = await cloudinary.uploader.upload(voiceFile.filepath, {
               resource_type: 'video', // Cloudinary uses 'video' for audio files
-              folder: `voice-notes/${session.user.email}`,
+              folder: `voice-notes/${userId}`,
               public_id: `voice-note-${Date.now()}`,
               // Optional: convert to MP3 for better compatibility
               // format: 'mp3',
@@ -102,7 +104,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           customLocation: customLocation || null,
           customDate: customDate ? new Date(customDate) : null,
           author: {
-            connect: { email: session.user.email },
+            connect: { clerkId: userId },
           },
           promptAnswers: {
             create: Object.entries(promptAnswers)
