@@ -1,6 +1,4 @@
 import { useEffect, useState } from "react";
-import { useSession } from "next-auth/react";
-import Router from "next/router";
 import Layout from "../../components/Layout";
 
 type Performance = {
@@ -11,8 +9,7 @@ type Performance = {
   prompts: { id: string; text: string }[];
 };
 
-const AdminPerformances = () => {
-  const { data: session, status } = useSession();
+const AdminPerformances: React.FC = () => {
   const [performances, setPerformances] = useState<Performance[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -24,22 +21,16 @@ const AdminPerformances = () => {
   const [formPrompts, setFormPrompts] = useState<string[]>([]);
 
   useEffect(() => {
-    console.log("session", session)
-    if (status === "loading") return;
-    if (!session || session.user.role !== "ADMIN") {
-      // Router.push("/"); // redirect if not admin
-      console.log("error")
-      return;
-    }
-    fetchPerformances();
-  }, [status]);
+    setIsLoading(true)
+    
+     fetchPerformances();
+     setIsLoading(false)
+   }, []);
 
   const fetchPerformances = async () => {
-    setIsLoading(true);
-    const res = await fetch("/api/performances");
-    const data = await res.json();
+    const res = await fetch("/api/performances"); 
+    const data: Performance[] = await res.json();
     setPerformances(data);
-    setIsLoading(false);
   };
 
   const resetForm = () => {
@@ -80,13 +71,7 @@ const AdminPerformances = () => {
     }
   };
 
-  const handleEdit = (p: Performance) => {
-    setEditingPerformance(p);
-    setFormName(p.name);
-    setFormLocation(p.location);
-    setFormDates(p.dates.map((d) => new Date(d.dateTime).toISOString().slice(0, 16)));
-    setFormPrompts(p.prompts.map((pr) => pr.text));
-  };
+
 
   const handleDelete = async (id: string) => {
     if (!confirm("Are you sure you want to delete this performance?")) return;
@@ -94,7 +79,7 @@ const AdminPerformances = () => {
     fetchPerformances();
   };
 
-  if (status === "loading" || isLoading) {
+  if (isLoading) {
     return <Layout>Loading performances...</Layout>;
   }
 
@@ -219,12 +204,7 @@ const AdminPerformances = () => {
                   </ul>
                 )}
                 <div className="mt-3 flex gap-2">
-                  {/* <button
-                    onClick={() => handleEdit(p)}
-                    className="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600"
-                  >
-                    Edit
-                  </button> */}
+              
                   <button
                     onClick={() => handleDelete(p.id)}
                     className="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700"

@@ -20,7 +20,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
       },
     },
     include: {
-      author: { select: { name: true, email: true } },
+      author: { select: { firstName: true, email: true } },
       performance: { select: { id: true, name: true } },
       performanceDate: { select: { id: true, dateTime: true } },
     },
