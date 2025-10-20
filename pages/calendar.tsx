@@ -1,12 +1,10 @@
 import React from 'react';
 import { GetServerSideProps } from 'next';
-import { useSession, getSession } from 'next-auth/react';
-import Router from 'next/router';
 import Layout from '../components/Layout';
-import Post, { PostProps } from '../components/Post';
+import { PostProps } from '../components/Post';
 import prisma from '../lib/prisma';
 import Calendar from "../components/Calendar";
-import { getAuth, clerkClient } from '@clerk/nextjs/server';
+import { getAuth } from '@clerk/nextjs/server';
 
 export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
    const { userId } = getAuth(req);
@@ -57,7 +55,7 @@ if (!isAuthenticated) {
       <div className="page">
         <h1>My Calendar</h1>
         <main>
-           {/* <Calendar posts={myPosts}/>  */}
+           <Calendar posts={myPosts}/> 
         </main>
       </div>
 

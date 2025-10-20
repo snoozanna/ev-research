@@ -3,17 +3,13 @@ import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 import { useRouter } from 'next/router';
 import { isSameDay, format } from 'date-fns';
+import { PostProps } from '../components/Post';
 
 
-type PerformancePost = {
-  id: string;
-  title: string;
-  performanceDate: {
-  dateTime: Date } // ISO date string
-};
+
 
 type Props = {
-  posts: PerformancePost[];
+  posts: PostProps[];
 };
 
 const PerformanceCalendar: React.FC<Props> = ({ posts }) => {
@@ -38,13 +34,13 @@ const performanceDates = posts.map(post =>
     <div>
       <h2>Performance Calendar</h2>
 
-     {/* <Calendar
+     <Calendar
         onChange={setValue}
         value={value}
         tileClassName={tileClassName}
         onClickDay={handleDateClick}
         className="text-black"
-      /> */}
+      />
 
       <style jsx global>{`
         .highlight {

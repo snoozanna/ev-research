@@ -1,11 +1,12 @@
 import React, { useState, useMemo } from 'react';
 import { GetServerSideProps } from 'next';
-import { getAuth, clerkClient } from '@clerk/nextjs/server';
+import { getAuth } from '@clerk/nextjs/server';
 import Layout from '../components/Layout';
 import Post, { PostProps } from '../components/Post';
 import prisma from '../lib/prisma';
 import { FaRegTrashAlt } from 'react-icons/fa';
 import { ShareToggle } from '../components/ShareToggle';
+
 
 export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
   const { userId } = getAuth(req);
