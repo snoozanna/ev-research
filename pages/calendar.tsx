@@ -3,7 +3,7 @@ import { GetServerSideProps } from 'next';
 import Layout from '../components/Layout';
 import { PostProps } from '../components/Post';
 import prisma from '../lib/prisma';
-// import Calendar from "../components/Calendar";
+import Calendar from "../components/Calendar";
 import { getAuth } from '@clerk/nextjs/server';
 
 export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
@@ -55,7 +55,7 @@ if (!isAuthenticated) {
       <div className="page">
         <h1>My Calendar</h1>
         <main>
-           {/* <Calendar posts={myPosts}/>  */}
+           <Calendar posts={myPosts}/> 
         </main>
       </div>
 
