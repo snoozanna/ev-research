@@ -73,9 +73,12 @@ const Reflections: React.FC<Props> = ({ drafts, isAuthenticated }) => {
         (sharedFilter === 'not_shared' && !post.shareWithArtist);
   
         const matchesColour =
-        colourFilter === 'all' || post.colourRating === colourFilter;
+        colourFilter === 'all' || post.colourRating.toString() === colourFilter.toString();
+         console.log("colourFilter", post)
+       
       return matchesPerformance && matchesShared && matchesColour;
     });
+   
   }, [draftPosts, selectedPerformance, sharedFilter, colourFilter]);
 
   const deletePost = async (id: string) => {

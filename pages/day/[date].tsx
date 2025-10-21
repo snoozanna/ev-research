@@ -3,6 +3,7 @@ import { parseISO, startOfDay, endOfDay } from 'date-fns';
 import Layout from '../../components/Layout';
 import Post, { PostProps } from '../../components/Post';
 import prisma from '../../lib/prisma';
+import CollapsedPost from '../../components/CollapsedPost';
 
 type Props = { posts: PostProps[]; date: string };
 
@@ -45,10 +46,10 @@ const DayPage: React.FC<Props> = ({ posts, date }) => {
     <Layout>
       <h1>Posts for {date}</h1>
       {Object.entries(grouped).map(([performance, posts]) => (
-        <div key={performance} className="performance-section">
+        <div key={performance} className="flex flex-col gap-3">
           <h2>{performance}</h2>
           {posts.map((p) => (
-            <Post key={p.id} post={p} />
+            <CollapsedPost key={p.id} post={p} />
           ))}
         </div>
       ))}

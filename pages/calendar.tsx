@@ -53,7 +53,7 @@ if (!isAuthenticated) {
   return (
     <Layout>
       <div className="page">
-        <h1>My Calendar</h1>
+        <h1 className='text-2xl font-bold mb-6'>My Calendar</h1>
         <main>
            <Calendar posts={myPosts}/> 
         </main>

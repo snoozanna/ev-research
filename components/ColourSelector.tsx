@@ -4,11 +4,11 @@ import { colourClasses } from '../components/Post'; // ✅ reuse same shared col
 
 type ColourSelectorProps = {
   postId: string;
-  initialColour: number;
+  initialColour: any;
 };
 
 export const ColourSelector = ({ postId, initialColour }: ColourSelectorProps) => {
-  const [colour, setColour] = useState(initialColour);
+  const [colour, setColour] = useState<number>(initialColour);
   const [isUpdating, setIsUpdating] = useState(false);
 
   const handleClick = async (newColour: number) => {

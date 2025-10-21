@@ -33,7 +33,6 @@ const PerformanceCalendar: React.FC<Props> = ({ posts }) => {
 
   return (
     <div>
-      <h2>Performance Calendar</h2>
       <Calendar
         onChange={(val) => {
           if (val instanceof Date) setValue(val);

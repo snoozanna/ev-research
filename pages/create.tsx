@@ -4,6 +4,7 @@ import Router from "next/router";
 import { Listbox, Transition } from "@headlessui/react";
 import { HiCheck, HiChevronDown } from "react-icons/hi";
 import { colourClasses } from "../components/Post";
+import { format } from "date-fns";
 
 type PerformanceOption = {
   id: string;
@@ -112,15 +113,16 @@ const Draft: React.FC = () => {
 
   return (
     <Layout>
+       <h1 className='text-2xl font-bold mb-6'>Record a Reflection</h1>
       <form
         onSubmit={submitData}
-        className="max-w-xl mx-auto p-6 bg-(--uranian-blue) shadow rounded-lg space-y-6"
+        className="max-w-xl mx-auto "
       >
-        <h1 className="text-2xl font-bold text-gray-800">Make Entry</h1>
+     
 
         {/* STEP 1: Choose Performance */}
-        <div className="space-y-2">
-          <label className="block text-gray-700 font-medium">Performance</label>
+        <div className="space-y-2 mb-2">
+          <label className="block text-gray-700 font-medium ">Performance</label>
 
           {isLoading ? (
             <p className="text-gray-500 italic">Loading performances...</p>
@@ -133,14 +135,14 @@ const Draft: React.FC = () => {
               }}
             >
               <div className="relative">
-                <Listbox.Button className="relative w-full cursor-pointer rounded-lg border border-gray-300 bg-white py-2 pl-3 pr-10 text-left shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:outline-none sm:text-sm">
+                <Listbox.Button className="relative w-full cursor-pointer bg-(--pink) text-white font-semibold py-2 pl-3 pr-10 text-left  focus:border-(--green) focus:ring focus:ring-(--green) focus:outline-none sm:text-sm">
                   <span className="block truncate">
                     {selectedPerformanceId
                       ? performances.find((p) => p.id === selectedPerformanceId)?.name
                       : "Select performance"}
                   </span>
                   <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
-                    <HiChevronDown className="h-5 w-5 text-gray-400" />
+                    <HiChevronDown className="h-5 w-5 text-white" />
                   </span>
                 </Listbox.Button>
                 <Transition
@@ -149,14 +151,14 @@ const Draft: React.FC = () => {
                   leaveFrom="opacity-100"
                   leaveTo="opacity-0"
                 >
-                  <Listbox.Options className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+                  <Listbox.Options className="absolute z-10 mt-1 max-h-60 w-full overflow-auto bg-white py-1 text-base shadow-lg  ring-opacity-5 focus:outline-none sm:text-sm">
                     {performances.map((p) => (
                       <Listbox.Option
                         key={p.id}
                         value={p.id}
                         className={({ active }) =>
-                          `relative cursor-pointer select-none py-2 pl-3 pr-9 ${
-                            active ? "bg-indigo-100 text-indigo-900" : "text-gray-900"
+                          `relative cursor-pointer select-none py-2 pl-3 pr-9 bold ${
+                            active ? "bg-(--pink) text-white" : "text-(--pink)"
                           }`
                         }
                       >
@@ -183,24 +185,77 @@ const Draft: React.FC = () => {
           )}
         </div>
 
-        {selectedPerformance && selectedPerformance.dates.length > 0 && (
-          <div className="space-y-2">
-            <label className="block text-gray-700 font-medium">Date</label>
-            <select
-              value={selectedDateId}
-              required
-              onChange={(e) => setSelectedDateId(e.target.value)}
-              className="w-full rounded bg-(--offwhite) border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:outline-none p-2"
-            >
-              <option value="">Select date</option>
-              {selectedPerformance.dates.map((d) => (
-                <option key={d.id} value={d.id}>
-                  {new Date(d.dateTime).toLocaleString()}
-                </option>
-              ))}
-            </select>
-          </div>
-        )}
+    {/* STEP 1.5: Choose Date */}
+{selectedPerformance && selectedPerformance.dates.length > 0 && (
+  <div className="space-y-2 mb-4">
+    <label className="block text-gray-700 font-medium">Date</label>
+
+    <Listbox
+      value={selectedDateId}
+      onChange={(val) => setSelectedDateId(val)}
+    >
+      <div className="relative">
+        <Listbox.Button className="relative w-full cursor-pointer bg-(--pink) text-white font-semibold py-2 pl-3 pr-10 text-left focus:border-(--green) focus:ring focus:ring-(--green) focus:outline-none sm:text-sm">
+          <span className="block truncate">
+            {selectedDateId
+              ? format(
+                  new Date(
+                    selectedPerformance.dates.find(
+                      (d) => d.id === selectedDateId
+                    )?.dateTime
+                  ),
+                  "do MMMM yyyy, h.mma"
+                )
+              : "Select date"}
+          </span>
+          <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
+            <HiChevronDown className="h-5 w-5 text-white" />
+          </span>
+        </Listbox.Button>
+
+        <Transition
+          as={Fragment}
+          leave="transition ease-in duration-100"
+          leaveFrom="opacity-100"
+          leaveTo="opacity-0"
+        >
+          <Listbox.Options className="absolute z-10 mt-1 max-h-60 w-full overflow-auto bg-white py-1 text-base shadow-lg ring-opacity-5 focus:outline-none sm:text-sm">
+            {selectedPerformance.dates.map((d) => (
+              <Listbox.Option
+                key={d.id}
+                value={d.id}
+                className={({ active }) =>
+                  `relative cursor-pointer select-none py-2 pl-3 pr-9 ${
+                    active ? "bg-(--pink) text-white" : "text-(--pink)"
+                  }`
+                }
+              >
+                {({ selected }) => (
+                  <>
+                    <span
+                      className={`block truncate ${
+                        selected ? "font-semibold" : ""
+                      }`}
+                    >
+                      {format(new Date(d.dateTime), "do MMMM yyyy, h.mma")}
+                    </span>
+                    {selected && (
+                      <span className="absolute inset-y-0 right-0 flex items-center pr-4 text-black">
+                        <HiCheck className="h-5 w-5" />
+                      </span>
+                    )}
+                  </>
+                )}
+              </Listbox.Option>
+            ))}
+          </Listbox.Options>
+        </Transition>
+      </div>
+    </Listbox>
+  </div>
+)}
+
+
 
         {/* STEP 2: Choose reflection type */}
         {selectedPerformanceId && (
