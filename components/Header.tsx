@@ -11,14 +11,18 @@ import {
   useUser,
 } from "@clerk/nextjs";
 import {
-  FaHome,
   FaFileAlt,
   FaCalendarAlt,
   FaPlus,
   FaSignOutAlt,
   FaSignInAlt,
-  FaAnchor,
+  FaPencilAlt,
+  FaQuoteLeft
 } from "react-icons/fa";
+import { GoHomeFill } from "react-icons/go";
+import { PiNotePencilBold } from "react-icons/pi";
+
+
 
 const Header: React.FC = () => {
   const router = useRouter();
@@ -47,16 +51,18 @@ const Header: React.FC = () => {
   }
 
   return (
-    <nav className="flex items-center justify-between p-4 shadow-md sticky top-0 bg-purple-600 text-white">
+    <nav className="flex flex-col items-center justify-between p-4  sticky top-0 bg-(--bg) gap-2">
+      <div className=""><h1 className="uppercase text-center mb-0 text-2xl">Performance Journal</h1></div>
       {/* LEFT SIDE: Nav Links */}
-      <div className="flex items-center space-x-4">
+      <div className="border-t-2 border-(--green) w-full flex p-2">
+        <div className="flex items-center w-full justify-around">
         <Link
           href="/"
           className={`flex items-center font-bold ${
-            isActive("/") ? "opacity-70" : "opacity-100"
+            isActive("/")  ? "text-(--icon-active)": "opacity-100"
           } hover:opacity-80`}
         >
-          <FaHome className="mr-2" />
+          <GoHomeFill size="1.5rem" />
         </Link>
 
        
@@ -65,10 +71,10 @@ const Header: React.FC = () => {
             <Link
               href="/reflections"
               className={`flex items-center font-bold ${
-                isActive("/reflections") ? "opacity-70" : "opacity-100"
+                isActive("/reflections") ? "text-(--icon-active)" : "opacity-100"
               } hover:opacity-80`}
             >
-              <FaFileAlt className="mr-2" />
+              <FaQuoteLeft size="1.5rem" />
             </Link>
           )}
 
@@ -77,62 +83,61 @@ const Header: React.FC = () => {
             <Link
               href="/calendar"
               className={`flex items-center font-bold ${
-                isActive("/calendar") ? "opacity-70" : "opacity-100"
+                isActive("/calendar")  ? "text-(--icon-active)": "opacity-100"
               } hover:opacity-80`}
             >
-              <FaCalendarAlt className="mr-2" />
+              <FaCalendarAlt size="1.5rem"  />
             </Link>
           )}
 
           {/* {isSignedIn &&  canSee.admin && ( */}
-          {isSignedIn && (
+          {/* {isSignedIn && (
             <Link
               href="/admin"
               className={`flex items-center font-bold ${
-                isActive("/admin") ? "opacity-70" : "opacity-100"
+                isActive("/admin")  ? "text-(--icon-active)": "opacity-100"
               } hover:opacity-80`}
             >
               <FaAnchor className="mr-2" />
             </Link>
-          )}
+          )} */}
        
-      </div>
+  
 
-      {/* MIDDLE: Create Button */}
-      <div className="flex items-center space-x-4">
+
       {isSignedIn && (
 
           // {canSee.create && (
-            <Link href="/create">
-              <button className="flex items-center font-bold hover:bg-purple-700 px-2 py-1 rounded">
-                <FaPlus className="mr-2" />
-              </button>
+            <Link href="/create" className="flex items-center font-bold hover:bg-purple-700">
+             
+                <FaPencilAlt size="1.5rem" />
+       
             </Link>
           )}
        
-      </div>
 
-      {/* RIGHT SIDE: User Info / Auth */}
-      <div className="flex items-center space-x-4">
+
+   
         {!isSignedIn && (
       
-          <SignInButton mode="modal">
+          <SignInButton mode="modal" >
             <button className="flex items-center font-bold border border-white px-4 py-2 rounded hover:bg-purple-700">
-              <FaSignInAlt className="mr-2" /> Sign In
-            </button>
+              <FaSignInAlt className="mr-2" size="1.5rem" /> 
+              </button>
           </SignInButton>
         )}
 
 {isSignedIn && (
-          <div className="flex flex-col items-end">
-            <p className="text-sm">{user?.fullName || user?.primaryEmailAddress?.emailAddress}</p>
+          <div className="flex items-end">
+            {/* <p className="text-sm">{user?.fullName || user?.primaryEmailAddress?.emailAddress}</p> */}
             <SignOutButton>
-              <button className="flex items-center font-bold hover:bg-purple-700 px-2 py-1 rounded">
-                <FaSignOutAlt className="mr-2" /> Sign Out
+              <button className="flex items-center font-bold hover:bg-purple-700">
+                <FaSignOutAlt className="mr-2" size="1.5rem"/> 
               </button>
             </SignOutButton>
           </div>
 )}
+      </div>
       </div>
     </nav>
   );

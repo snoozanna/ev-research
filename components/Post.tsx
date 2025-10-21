@@ -21,6 +21,7 @@ export type PostProps = {
   } | null;
   content: string;
   voiceNoteUrl?: string | null;
+  colourRating?: string | null;
   promptAnswers?: {
     id: string;
     text: string;
@@ -33,6 +34,14 @@ export type PostProps = {
   shareWithArtist: boolean;
 };
 
+export const colourClasses = {
+  1: "bg-(--color1)",
+  2: "bg-(--color2)",
+  3: "bg-(--color3)",
+  4: "bg-(--color4)",
+  5: "bg-(--color5)",
+} as const;
+
 const Post: React.FC<{ post: PostProps }> = ({ post }) => {
   const authorName = post.author?.name || "Unknown author";
 
@@ -44,7 +53,15 @@ const Post: React.FC<{ post: PostProps }> = ({ post }) => {
     : null;
 console.log("post", post)
   return (
-    <div className="bg-(--post-color) p-6 rounded-lg shadow-md ">
+    <div className={`bg-(--post-color) p-6 rounded-lg shadow-md ${
+                    {1: "bg-blue-100",
+                    2: "bg-green-100",
+                    3: "bg-green-100",
+                    4: "bg-orange-100",
+                    5: "bg-red-100",
+                  }[post.colourRating || 3]
+                }`}>
+     
       {/* Performance Name */}
       {post.performance?.name && (
         <h2 className="text-2xl font-bold text-(--fluorescent-cyan)">{post.performance.name}</h2>

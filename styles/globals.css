@@ -9,11 +9,28 @@
     --fluorescent-cyan: #0affedff;
     --mutedorange: #f2ba7f;
     --offwhite: #f7efef;
-    --bg: var(--raspberry-rose);
-    --color: var(--uranian-blue);
+    --pink: #f994ba;
+    --green: #9fcb74;
+    --orange: #f06d3e;
+    --darkpink: #d27089;
+    --lavender:#d3b6d4;
+    --peach: #f2bdac;
+    --blue: #52a5cf;
+    --red: #fa5c2d;
+    --deletered: #ec584a;
+    --brightorange:#faa02e;
+    --yellow: #eece7b;
+    --bg: var(--yellow);
+    --icon-active: var(--darkpink);
+    --color: var(--orange);
     --colordark: var(--davys-gray);
-    --post-color: var(--purpureus);
-    --button: var(--mutedorange);
+    --post-color: var(--peach);
+    --button: var(--lavender);
+    --color1: var(--darkpink);
+    --color2: var(--blue);
+    --color3: var(--green);
+    --color4: var(--brightorange);
+    --color5: var(--red);
   }
 
 html {
@@ -41,14 +58,13 @@ html {
   }
 
   h1{
-    font-size: 2rem;
+    /* font-size: 2rem; */
     font-weight: 900;
-    margin-bottom: 3rem;
+
   }
 
   a {
     text-decoration: none;
-    color: var(--geist-foreground);
     display: inline-block;
   }
 

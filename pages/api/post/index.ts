@@ -18,28 +18,21 @@ export const config = {
   },
 };
 
-
-
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  // Check if user is authenticated
   const { userId } = getAuth(req);
-  console.log(userId)
-  if (!userId) {
-    return res.status(401).json({ message: "Unauthorized" });
-  }
+  if (!userId) return res.status(401).json({ message: "Unauthorized" });
 
   if (req.method === "POST") {
     try {
-      // Configure formidable for file upload
       const form = formidable({
         maxFileSize: 10 * 1024 * 1024, // 10MB
-        filter: ({ name, mimetype }) => name === "voiceNote" && (mimetype?.startsWith("audio/") || false),
+        filter: ({ name, mimetype }) =>
+          name === "voiceNote" && (mimetype?.startsWith("audio/") || false),
       });
 
-      // Parse the incoming form data
       const [fields, files] = await form.parse(req);
 
-      // Extract form fields
+      // Extract form fields safely
       const title = Array.isArray(fields.title) ? fields.title[0] : fields.title;
       const content = Array.isArray(fields.content) ? fields.content[0] : fields.content;
       const performanceDateId = Array.isArray(fields.performanceDateId)
@@ -55,24 +48,24 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       const customLocation = Array.isArray(fields.customLocation) ? fields.customLocation[0] : fields.customLocation;
       const customDate = Array.isArray(fields.customDate) ? fields.customDate[0] : fields.customDate;
 
-      // Handle voice note file upload to Cloudinary
+      // ⭐ NEW FIELD
+      const colourRatingRaw = Array.isArray(fields.colourRating)
+        ? fields.colourRating[0]
+        : fields.colourRating;
+      const colourRating = colourRatingRaw ? parseInt(colourRatingRaw, 10) : 1;
+
+      // Handle voice note file upload
       let voiceNoteUrl: string | null = null;
       if (files.voiceNote) {
         const voiceFile = Array.isArray(files.voiceNote) ? files.voiceNote[0] : files.voiceNote;
-       
         if (voiceFile && voiceFile.filepath) {
           try {
-            // Upload to Cloudinary
             const uploadResult = await cloudinary.uploader.upload(voiceFile.filepath, {
-              resource_type: 'video', // Cloudinary uses 'video' for audio files
+              resource_type: 'video',
               folder: `voice-notes/${userId}`,
               public_id: `voice-note-${Date.now()}`,
-              // Optional: convert to MP3 for better compatibility
-              // format: 'mp3',
             });
-
             voiceNoteUrl = uploadResult.secure_url;
-            console.log('File uploaded to Cloudinary:', voiceNoteUrl);
           } catch (uploadError) {
             console.error('Cloudinary upload error:', uploadError);
             throw new Error('Failed to upload voice note to Cloudinary');
@@ -80,7 +73,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         }
       }
 
-      // Handle prompt answers 
+      // Handle prompt answers
       let promptAnswers: Record<string, string> = {};
       try {
         promptAnswers = promptAnswersRaw ? JSON.parse(promptAnswersRaw) : {};
@@ -88,24 +81,19 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         console.error("Failed to parse promptAnswers", e);
       }
 
-      // Create post in database
+      // ⭐ Create post with colourRating
       const result = await prisma.post.create({
         data: {
           title: title || "",
           content: content || "",
           voiceNoteUrl: voiceNoteUrl || null,
-          performance: performanceId
-            ? { connect: { id: performanceId } }
-            : undefined,
-          performanceDate: performanceDateId
-            ? { connect: { id: performanceDateId } }
-            : undefined,
+          colourRating, // ⭐ new field
+          performance: performanceId ? { connect: { id: performanceId } } : undefined,
+          performanceDate: performanceDateId ? { connect: { id: performanceDateId } } : undefined,
           customName: customName || null,
           customLocation: customLocation || null,
           customDate: customDate ? new Date(customDate) : null,
-          author: {
-            connect: { clerkId: userId },
-          },
+          author: { connect: { clerkId: userId } },
           promptAnswers: {
             create: Object.entries(promptAnswers)
               .filter(([_, text]) => text.trim() !== "")
@@ -122,6 +110,22 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     } catch (err) {
       console.error("Error processing form:", err);
       res.status(500).json({ message: "Something went wrong" });
+    }
+  } else if (req.method === "PUT") {
+    // ⭐ Allow updating colour rating (e.g., from Reflections page)
+    try {
+      const { id, colourRating } = req.body;
+      if (!id) return res.status(400).json({ message: "Post ID required" });
+
+      const updated = await prisma.post.update({
+        where: { id },
+        data: { colourRating: parseInt(colourRating, 10) },
+      });
+
+      res.status(200).json(updated);
+    } catch (err) {
+      console.error("Error updating post:", err);
+      res.status(500).json({ message: "Failed to update post" });
     }
   } else {
     res.status(405).json({ message: "Method not allowed" });

@@ -41,11 +41,13 @@ model Post {
   customDate        DateTime?
   createdAt         DateTime         @default(now())
   shareWithArtist   Boolean          @default(false)
+  colourRating      Int              @default(3)
   author            User?            @relation(fields: [authorId], references: [id])
   performanceDate   PerformanceDate? @relation(fields: [performanceDateId], references: [id])
   performance       Performance?     @relation(fields: [performanceId], references: [id])
   promptAnswers     PromptAnswer[]
 }
+
 
 model Prompt {
   id            String         @id @default(cuid())

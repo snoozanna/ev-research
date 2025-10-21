@@ -3,6 +3,7 @@ import Layout from "../components/Layout";
 import Router from "next/router";
 import { Listbox, Transition } from "@headlessui/react";
 import { HiCheck, HiChevronDown } from "react-icons/hi";
+import { colourClasses } from "../components/Post";
 
 type PerformanceOption = {
   id: string;
@@ -19,7 +20,7 @@ const Draft: React.FC = () => {
   const [promptAnswers, setPromptAnswers] = useState<Record<string, string>>({});
   const [selectedPerformanceId, setSelectedPerformanceId] = useState<string>("");
   const [selectedDateId, setSelectedDateId] = useState<string>("");
-
+  const [colourRating, setColourRating] = useState<number>(3);
   const [performances, setPerformances] = useState<PerformanceOption[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [mode, setMode] = useState<Mode>("");
@@ -93,6 +94,7 @@ const Draft: React.FC = () => {
       formData.append("performanceId", selectedPerformanceId);
       formData.append("performanceDateId", selectedDateId);
       formData.append("promptAnswers", JSON.stringify(promptAnswers));
+      formData.append("colourRating", String(colourRating));
       if (audioBlob) formData.append("voiceNote", audioBlob, "voice-note.webm");
 
       const response = await fetch("/api/post", { method: "POST", body: formData });
@@ -304,6 +306,24 @@ const Draft: React.FC = () => {
 
         {mode && (
           <>
+           {/* STEP 4: Colour Rating */}
+<div className="space-y-2">
+  <label className="block text-gray-700 font-medium">Colour Rating</label>
+  <div className="flex items-center gap-3">
+    {[1, 2, 3, 4, 5].map((num) => (
+      <button
+        key={num}
+        type="button"
+        onClick={() => setColourRating(num)}
+        className={`w-8 h-8 rounded-full border-2 transition-transform transform hover:scale-110 ${
+          colourRating === num ? "border-white" : "border-transparent"
+        } ${colourClasses[num]}`}
+        title={`Colour ${num}`}
+      />
+    ))}
+  </div>
+</div>
+
             {error && <div className="text-red-600 font-medium mb-2">{error}</div>}
             <input
               type="submit"

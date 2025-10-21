@@ -21,7 +21,7 @@ const Layout: React.FC<Props> = (props) => {
 
    <div>
       <Header />
-      <div className="p-5">{props.children}</div>
+      <div className="p-4">{props.children}</div>
    </div>
 
   )

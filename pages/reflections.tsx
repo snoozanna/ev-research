@@ -2,10 +2,10 @@ import React, { useState, useMemo } from 'react';
 import { GetServerSideProps } from 'next';
 import { getAuth } from '@clerk/nextjs/server';
 import Layout from '../components/Layout';
-import Post, { PostProps } from '../components/Post';
+import { PostProps, colourClasses } from '../components/Post';
+import CollapsedPost from '../components/CollapsedPost';
 import prisma from '../lib/prisma';
-import { FaRegTrashAlt } from 'react-icons/fa';
-import { ShareToggle } from '../components/ShareToggle';
+
 
 
 export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
@@ -47,6 +47,7 @@ const Reflections: React.FC<Props> = ({ drafts, isAuthenticated }) => {
   // Filter states
   const [selectedPerformance, setSelectedPerformance] = useState<string>('all');
   const [sharedFilter, setSharedFilter] = useState<'all' | 'shared' | 'not_shared'>('all');
+  const [colourFilter, setColourFilter] = useState<number | 'all'>('all');
 
   // Get unique performances for dropdown
   const performances = useMemo(() => {
@@ -65,15 +66,17 @@ const Reflections: React.FC<Props> = ({ drafts, isAuthenticated }) => {
       const matchesPerformance =
         selectedPerformance === 'all' ||
         post.performance?.id === selectedPerformance;
-
+  
       const matchesShared =
         sharedFilter === 'all' ||
         (sharedFilter === 'shared' && post.shareWithArtist) ||
         (sharedFilter === 'not_shared' && !post.shareWithArtist);
-
-      return matchesPerformance && matchesShared;
+  
+        const matchesColour =
+        colourFilter === 'all' || post.colourRating === colourFilter;
+      return matchesPerformance && matchesShared && matchesColour;
     });
-  }, [draftPosts, selectedPerformance, sharedFilter]);
+  }, [draftPosts, selectedPerformance, sharedFilter, colourFilter]);
 
   const deletePost = async (id: string) => {
     const confirmed = window.confirm("Are you sure you want to delete this post?");
@@ -101,7 +104,7 @@ const Reflections: React.FC<Props> = ({ drafts, isAuthenticated }) => {
 
   return (
     <Layout>
-      <div className="max-w-3xl mx-auto p-4">
+      <div className="max-w-3xl mx-auto">
         <h1 className="text-2xl font-bold mb-6">My Reflections</h1>
 
         {/* FILTER BAR */}
@@ -130,28 +133,37 @@ const Reflections: React.FC<Props> = ({ drafts, isAuthenticated }) => {
             <option value="shared">Shared with artist</option>
             <option value="not_shared">Not shared</option>
           </select>
+        {/* Colour filter */}
+        <div className="flex items-center gap-3">
+  {[1, 2, 3, 4, 5].map((num) => (
+    <button
+      key={num}
+      onClick={() => setColourFilter(num)}
+      className={`w-8 h-8 rounded-full border-2 transition-transform transform hover:scale-110 ${
+        colourFilter === num
+          ? "border-white"
+          : "border-transparent"
+      } ${colourClasses[num]}`}
+      title={`Colour ${num}`}
+    />
+  ))}
+
+  {/* Clear filter button */}
+  <button
+    onClick={() => setColourFilter('all')}
+    className="ml-2 px-3 py-1 border rounded-md text-sm text-gray-700 hover:bg-gray-100"
+  >
+    Clear
+  </button>
+</div>
         </div>
+
 
         {/* POSTS */}
         <main className="space-y-6">
           {filteredPosts.map((post) => (
-            <div
-              key={post.id}
-              className="bg-white shadow-sm rounded-lg p-4 hover:shadow-md transition-shadow duration-150"
-            >
-              <Post post={post} />
-
-              <div className="mt-4 flex flex-wrap gap-4 items-center justify-between">
-                <ShareToggle postId={post.id} initialState={post.shareWithArtist ?? false} />
-                <button
-                  onClick={() => deletePost(post.id)}
-                  className="flex items-center gap-2 px-4 py-2 rounded bg-red-500 hover:bg-red-600 text-white focus:outline-none focus:ring focus:ring-red-200"
-                >
-                  <FaRegTrashAlt />
-                </button>
-              </div>
-            </div>
-          ))}
+              <CollapsedPost post={post} />
+        ))}
           {filteredPosts.length === 0 && <p className="text-gray-500">No reflections found.</p>}
         </main>
       </div>
