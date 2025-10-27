@@ -16,7 +16,7 @@ export type PostProps = {
   } | null;
   performanceId: string;
   author: {
-    name: string;
+    firstName: string;
     email: string;
   } | null;
   content: string;
