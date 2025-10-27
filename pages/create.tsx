@@ -259,32 +259,34 @@ const Draft: React.FC = () => {
 
         {/* STEP 2: Choose reflection type */}
         {selectedPerformanceId && (
-          <div className="space-y-2">
+          <div className="space-y-2 mb-4">
             <h2 className="text-lg font-semibold text-gray-800">
               How would you like to reflect?
             </h2>
-            <div className="flex flex-col sm:flex-row gap-2">
+            <div className="flex flex-row-reverse items-center sm:flex-row gap-4 justify-around">
               <button
                 type="button"
                 onClick={() => setMode("voice")}
-                className="flex-1 rounded bg-(--button) text-black py-2 px-4 hover:bg-indigo-700 focus:outline-none focus:ring focus:ring-indigo-200"
+                className="rounded-full shadow-lg  bg-(--peach) text-black py-2 px-4 w-30 h-30 border-3 border-(--pink) focus:outline-none focus:ring-3 focus:ring-white focus:border-none"
               >
                 Voice note
               </button>
-              <button
-                type="button"
-                onClick={() => setMode("reflection")}
-                className="flex-1 rounded bg-(--button) text-black py-2 px-4 hover:bg-indigo-700 focus:outline-none focus:ring focus:ring-indigo-200"
-              >
-                Written reflection
-              </button>
-              <button
-                type="button"
-                onClick={() => setMode("prompts")}
-                className="flex-1 rounded bg-(--button) text-black py-2 px-4 hover:bg-indigo-700 focus:outline-none focus:ring focus:ring-indigo-200"
-              >
-                Answer prompts
-              </button>
+              <div className="flex flex-col gap-4">
+                <button
+                  type="button"
+                  onClick={() => setMode("reflection")}
+                  className="flex shadow-lg  w-30 bg-(--lavender) text-black py-4 px-6 border-3 border-(--pink) focus:outline-none focus:ring-3 focus:ring-white focus:border-none"
+                >
+                  Written reflection
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setMode("prompts")}
+                  className="flex w-40 shadow-lg   bg-(--green) text-black border-3 border-(--pink)  py-6 px-4 focus:outline-none focus:ring-3 focus:ring-white focus:border-none"
+                >
+                  Answer prompts
+                </button>
+              </div>
             </div>
           </div>
         )}
@@ -292,11 +294,12 @@ const Draft: React.FC = () => {
         {/* STEP 3: Reflection Inputs */}
         {mode === "reflection" && (
           <div className="space-y-2">
-            <label className="block text-gray-700 font-medium">Write your reflection</label>
+            <label className="block text-gray-700 font-medium"></label>
             <textarea
               value={content}
               onChange={(e) => setContent(e.target.value)}
               rows={6}
+              placeholder="Write here..."
               className="w-full rounded bg-(--offwhite) text-(--colordark) border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:outline-none p-2"
             />
           </div>
@@ -309,15 +312,15 @@ const Draft: React.FC = () => {
               <button
                 type="button"
                 onClick={startRecording}
-                className="rounded bg-green-600 text-white py-2 px-4 hover:bg-green-700 focus:outline-none focus:ring focus:ring-green-200"
+                className="rounded bg-(--green) text-black py-2 px-4 hover:bg-green-700 focus:outline-none focus:ring focus:ring-green-200"
               >
-                🎤 Start Recording
+               Start Recording
               </button>
             ) : (
               <button
                 type="button"
                 onClick={stopRecording}
-                className="rounded bg-red-600 text-white py-2 px-4 hover:bg-red-700 focus:outline-none focus:ring focus:ring-red-200"
+                className="rounded bg-(--red) text-white py-2 px-4 hover:bg-(--red) focus:outline-none focus:ring focus:ring-(--red)"
               >
                 ⏹ Stop Recording
               </button>
@@ -362,7 +365,7 @@ const Draft: React.FC = () => {
         {mode && (
           <>
            {/* STEP 4: Colour Rating */}
-<div className="space-y-2">
+<div className="space-y-2 mb-4">
   <label className="block text-gray-700 font-medium">Colour Rating</label>
   <div className="flex items-center gap-3">
     {[1, 2, 3, 4, 5].map((num) => (

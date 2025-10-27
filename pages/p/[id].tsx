@@ -52,7 +52,7 @@ type Props = {
 
 const ReflectionPage: React.FC<Props> = ({ post }) => {
   const router = useRouter();
-  console.log("post", post)
+
   const deletePost = async (id: string) => {
     const confirmed = window.confirm("Are you sure you want to delete this reflection?");
     if (!confirmed) return;
@@ -67,13 +67,10 @@ const ReflectionPage: React.FC<Props> = ({ post }) => {
 
   return (
     <Layout>
-        <Link href={`/reflections`}
-      className={`p-2  mb-2  flex flex-row gap-1 `}>Back</Link>
+
       
-      <div className="max-w-3xl mx-auto p-6 bg-white rounded-lg shadow-md space-y-6">
-        <h1 className="text-2xl font-bold text-gray-900 mb-2">
-          Reflection Details
-        </h1>
+      <div className="max-w-3xl mx-auto p-6 space-y-6 bg-(--peach)">
+      
 
         {/* Reflection content */}
         <Post post={post} />
@@ -96,6 +93,8 @@ const ReflectionPage: React.FC<Props> = ({ post }) => {
           </div>
         </div>
       </div>
+      <Link href={`/reflections`}
+      className={`p-2  mb-2  flex flex-row gap-1 `}>Back</Link>
     </Layout>
   );
 };

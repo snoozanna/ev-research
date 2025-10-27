@@ -27,11 +27,11 @@ import { PiNotePencilBold } from "react-icons/pi";
 const Header: React.FC = () => {
   const router = useRouter();
   const { user, isSignedIn, isLoaded } = useUser();
-// console.log("user", isSignedIn)
+console.log("user", user)
   const isActive = (pathname: string) => router.pathname === pathname;
-
-  // Assuming you’ve stored role in Clerk publicMetadata (recommended)
-  const role = user?.publicMetadata?.role as string | undefined;
+const userName = user?.username
+// TODO 
+  // const role = GET ROLE 
 
   // // Define role visibility
   // const canSee = {
@@ -44,7 +44,7 @@ const Header: React.FC = () => {
 
   if (!isLoaded) {
     return (
-      <nav className="flex items-center justify-between p-4 shadow-md bg-purple-600 text-white">
+      <nav className="flex flex-col items-center justify-between p-4  sticky top-0 bg-(--bg) gap-2">
         <p>Loading user...</p>
       </nav>
     );
@@ -52,7 +52,10 @@ const Header: React.FC = () => {
 
   return (
     <nav className="flex flex-col items-center justify-between p-4  sticky top-0 bg-(--bg) gap-2">
-      <div className=""><h1 className="uppercase text-center mb-0 text-2xl">Performance Journal</h1></div>
+      <div className="flex flex-col">
+      {isSignedIn && (
+        <span className="w-full text-center text-(--teal) italic">{userName}'s</span>)}
+        <h1 className="uppercase text-center mb-0 text-2xl">Performance Journal</h1></div>
       {/* LEFT SIDE: Nav Links */}
       <div className="border-t-2 border-(--green) w-full flex p-2">
         <div className="flex items-center w-full justify-around">

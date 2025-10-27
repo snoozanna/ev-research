@@ -35,7 +35,7 @@ const CollapsedPost: React.FC<{ post: PostProps }> = ({ post }) => {
       <div className="flex flex-col justify-between">
      <div className="flex  gap-2 w-full">
       
-      <div className="flex gap-3 w-1/2 items-center justify-center">
+      <div className="flex flex-col gap-3 w-1/2 items-center justify-center">
         {post.content && (
           <div
             className="w-5 h-5 bg-indigo-500 rounded-sm"

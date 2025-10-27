@@ -38,7 +38,7 @@ export default async function handler(req, res) {
   }
 
   const { type, data } = evt;
-
+  
   if (type === "user.created" || type === "user.updated") {
     console.log("received something")
     const email = data.email_addresses?.[0]?.email_address;

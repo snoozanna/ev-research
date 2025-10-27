@@ -12,17 +12,39 @@ const Blog: React.FC = () => {
     
     <Layout>
       <div className="container mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold mb-6">Home page</h1>
+        
 
-        <main className="space-y-8">
-        <div>Hello{isSignedIn && user.firstName + " "}!</div>
-         <p> What goes here?</p>
-          <Link href="/reflections"
-              className={`flex items-center font-bold`}
-            >
-              <h2>Go to my reflections</h2>
-            </Link>
-        </main>
+      <main className="flex flex-wrap gap-6 justify-center p-2">
+  <Link href="/create" className="w-full sm:w-1/2 md:w-1/3">
+    <button
+      type="button"
+      className="bg-(--darkpink) text-white font-bold w-full p-8 rounded-md shadow-[4px_6px_0px_rgba(0,0,0,0.15)] rotate-[-2deg] hover:rotate-0 hover:shadow-[2px_3px_0px_rgba(0,0,0,0.2)] transition-all duration-200"
+    >
+      Record a reflection
+    </button>
+  </Link>
+<div className="flex w-full gap-4">
+  
+    <Link href="/reflections" className="w-full sm:w-1/2 md:w-1/3">
+      <button
+        type="button"
+        className="bg-(--lavender) text-white font-bold w-full p-8 rounded-md shadow-[4px_6px_0px_rgba(0,0,0,0.15)] rotate-[2deg] hover:rotate-0 hover:shadow-[2px_3px_0px_rgba(0,0,0,0.2)] transition-all duration-200"
+      >
+        My reflections
+      </button>
+    </Link>
+  
+    <Link href="/about" className="w-full sm:w-1/2 md:w-1/3">
+      <button
+        type="button"
+        className="bg-(--peach) text-white font-bold w-full p-8 rounded-md shadow-[4px_6px_0px_rgba(0,0,0,0.15)] rotate-[-3deg] hover:rotate-0 hover:shadow-[2px_3px_0px_rgba(0,0,0,0.2)] transition-all duration-200"
+      >
+        About
+      </button>
+    </Link>
+</div>
+</main>
+
       </div>
     </Layout>
   );

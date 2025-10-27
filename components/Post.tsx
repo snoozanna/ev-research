@@ -43,29 +43,22 @@ export const colourClasses = {
 } as const;
 
 const Post: React.FC<{ post: PostProps }> = ({ post }) => {
-  const authorName = post.author?.name || "Unknown author";
+  const authorName = post.author?.firstName || "Unknown author";
 
   const createdAtDate = new Date(post.createdAt);
   const formattedDate = format(createdAtDate, "PPpp");
 
   const formattedPerfDate = post.performanceDate
-    ? format(new Date(post.performanceDate.dateTime), "PPpp")
-    : null;
-console.log("post", post)
+   ? format(new Date(post.performanceDate.dateTime), "EEE dd MMM yyyy")
+   : null;
+
   return (
-    <div className={`bg-(--post-color) p-6 rounded-lg shadow-md ${
-                    {1: "bg-blue-100",
-                    2: "bg-green-100",
-                    3: "bg-green-100",
-                    4: "bg-orange-100",
-                    5: "bg-red-100",
-                  }[post.colourRating || 3]
-                }`}>
+    <div className="">
+      <span className="w-full text-center text-(--teal) italic">Performance</span>
+              <h1 className="text-2xl font-bold uppercase">
+                {post.performance?.name}
+              </h1>
      
-      {/* Performance Name */}
-      {post.performance?.name && (
-        <h2 className="text-2xl font-bold text-(--fluorescent-cyan)">{post.performance.name}</h2>
-      )}
         {/* Performance Date */}
         {formattedPerfDate && (
         <span>
@@ -99,7 +92,7 @@ console.log("post", post)
           <audio
             controls
             preload="none"
-            className="w-full max-w-md rounded-lg"
+            className="w-full max-w-md rounded-lg mb-2"
           >
             <source src={post.voiceNoteUrl} type="audio/mpeg" />
             Your browser does not support the audio element.
@@ -114,7 +107,7 @@ console.log("post", post)
           {post.promptAnswers.map((answer) => (
             <div
               key={answer.id}
-              className="border-l-4 border-(--fluorescent-cyan) pl-4 py-2"
+              className="border-l-4 border-(--teal) pl-4 py-2"
             >
               {answer.prompt?.text && (
                 <p className="font-semibold">{answer.prompt.text}</p>

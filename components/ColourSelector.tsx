@@ -34,7 +34,7 @@ export const ColourSelector = ({ postId, initialColour }: ColourSelectorProps) =
 
   return (
     <div className="flex items-center gap-3">
-      <FaPalette className="text-gray-600" />
+     
       <div className="flex gap-2 items-center">
         {[1, 2, 3, 4, 5].map((num) => (
           <button
@@ -42,7 +42,7 @@ export const ColourSelector = ({ postId, initialColour }: ColourSelectorProps) =
             onClick={() => handleClick(num)}
             disabled={isUpdating}
             className={`w-8 h-8 rounded-full border-2 transition-transform transform hover:scale-110 ${
-              colour === num ? 'border-black' : 'border-transparent'
+              colour === num ? 'border-white' : 'border-transparent'
             } ${colourClasses[num]} ${isUpdating ? 'opacity-50 cursor-wait' : ''}`}
             title={`Colour ${num}`}
           />

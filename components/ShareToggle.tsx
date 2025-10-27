@@ -24,8 +24,8 @@ export const ShareToggle = ({ postId, initialState }: { postId: string; initialS
           onClick={toggle}
           role="switch"
           aria-checked={enabled}
-          className={`relative inline-flex items-center h-6 w-12 rounded-full transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-400 ${
-            enabled ? 'bg-indigo-600' : 'bg-gray-300'
+          className={`relative inline-flex items-center h-6 w-12 rounded-full transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-bg-(--teal) ${
+            enabled ? 'bg-(--teal)' : 'bg-gray-300'
           }`}
         >
           <span

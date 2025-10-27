@@ -5,6 +5,7 @@ import Layout from '../components/Layout';
 import { PostProps, colourClasses } from '../components/Post';
 import CollapsedPost from '../components/CollapsedPost';
 import prisma from '../lib/prisma';
+import CollapsedPostIt from '../components/CollapsedPostIt';
 
 
 
@@ -164,10 +165,12 @@ const Reflections: React.FC<Props> = ({ drafts, isAuthenticated }) => {
 
         {/* POSTS */}
         <main className="space-y-6">
-          {filteredPosts.map((post) => (
-              <CollapsedPost post={post} />
-        ))}
-          {filteredPosts.length === 0 && <p className="text-gray-500">No reflections found.</p>}
+        <div className="grid grid-cols-2 grid-flow-row sm:grid-cols-2 gap-6">
+            {filteredPosts.map((post) => (
+                 <CollapsedPostIt key={post.id} post={post} />
+          ))}
+            {filteredPosts.length === 0 && <p className="text-gray-500">No reflections found.</p>}
+          </div>
         </main>
       </div>
     </Layout>
