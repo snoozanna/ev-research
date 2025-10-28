@@ -86,6 +86,14 @@ const Draft: React.FC = () => {
     setAudioUrl("");
   };
 
+  const clearAll = () => {
+    setMode("");
+    setContent("");
+    setPromptAnswers({});
+    clearRecording();
+    setColourRating(3);
+  };
+
   const submitData = async (e: React.SyntheticEvent) => {
     e.preventDefault();
     setError("");
@@ -113,29 +121,37 @@ const Draft: React.FC = () => {
 
   return (
     <Layout>
-       <h1 className='text-2xl font-bold mb-6'>Record a Reflection</h1>
-      <form
-        onSubmit={submitData}
-        className="max-w-xl mx-auto "
-      >
-     
-
+      <h1 className="text-2xl font-bold mb-6">Record a Reflection</h1>
+      <form onSubmit={submitData} className="max-w-xl mx-auto">
         {/* STEP 1: Choose Performance */}
         <div className="space-y-2 mb-2">
-          <label className="block text-gray-700 font-medium ">Performance</label>
-
+          <label className="block text-gray-700 font-medium">Performance</label>
           {isLoading ? (
             <p className="text-gray-500 italic">Loading performances...</p>
           ) : (
             <Listbox
               value={selectedPerformanceId}
               onChange={(val) => {
-                setSelectedPerformanceId(val);
-                setMode("");
+                if (selectedPerformanceId && val !== selectedPerformanceId) {
+                  const confirmChange = confirm("Changing the performance will clear your current reflection. Continue?");
+                  if (!confirmChange) return;
+              
+                  setSelectedPerformanceId(val);
+                  setSelectedDateId("");
+                  setMode("");
+                  setContent("");
+                  setPromptAnswers({});
+                  clearRecording();
+                  setColourRating(3);
+                  setError("");
+                } else {
+                  // First time selecting — just set it
+                  setSelectedPerformanceId(val);
+                }
               }}
             >
               <div className="relative">
-                <Listbox.Button className="relative w-full cursor-pointer bg-(--pink) text-white font-semibold py-2 pl-3 pr-10 text-left  focus:border-(--green) focus:ring focus:ring-(--green) focus:outline-none sm:text-sm">
+                <Listbox.Button className="relative w-full cursor-pointer bg-(--pink) text-white font-semibold py-2 pl-3 pr-10 text-left focus:border-(--green) focus:ring focus:ring-(--green) focus:outline-none sm:text-sm">
                   <span className="block truncate">
                     {selectedPerformanceId
                       ? performances.find((p) => p.id === selectedPerformanceId)?.name
@@ -151,7 +167,7 @@ const Draft: React.FC = () => {
                   leaveFrom="opacity-100"
                   leaveTo="opacity-0"
                 >
-                  <Listbox.Options className="absolute z-10 mt-1 max-h-60 w-full overflow-auto bg-white py-1 text-base shadow-lg  ring-opacity-5 focus:outline-none sm:text-sm">
+                  <Listbox.Options className="absolute z-10 mt-1 max-h-60 w-full overflow-auto bg-white py-1 text-base shadow-lg ring-opacity-5 focus:outline-none sm:text-sm">
                     {performances.map((p) => (
                       <Listbox.Option
                         key={p.id}
@@ -164,9 +180,7 @@ const Draft: React.FC = () => {
                       >
                         {({ selected }) => (
                           <>
-                            <span
-                              className={`block truncate ${selected ? "font-semibold" : ""}`}
-                            >
+                            <span className={`block truncate ${selected ? "font-semibold" : ""}`}>
                               {p.name}
                             </span>
                             {selected && (
@@ -185,89 +199,74 @@ const Draft: React.FC = () => {
           )}
         </div>
 
-    {/* STEP 1.5: Choose Date */}
-{selectedPerformance && selectedPerformance.dates.length > 0 && (
-  <div className="space-y-2 mb-4">
-    <label className="block text-gray-700 font-medium">Date</label>
-
-    <Listbox
-      value={selectedDateId}
-      onChange={(val) => setSelectedDateId(val)}
-    >
-      <div className="relative">
-        <Listbox.Button className="relative w-full cursor-pointer bg-(--pink) text-white font-semibold py-2 pl-3 pr-10 text-left focus:border-(--green) focus:ring focus:ring-(--green) focus:outline-none sm:text-sm">
-          <span className="block truncate">
-            {selectedDateId
-              ? format(
-                  new Date(
-                    selectedPerformance.dates.find(
-                      (d) => d.id === selectedDateId
-                    )?.dateTime
-                  ),
-                  "do MMMM yyyy, h.mma"
-                )
-              : "Select date"}
-          </span>
-          <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
-            <HiChevronDown className="h-5 w-5 text-white" />
-          </span>
-        </Listbox.Button>
-
-        <Transition
-          as={Fragment}
-          leave="transition ease-in duration-100"
-          leaveFrom="opacity-100"
-          leaveTo="opacity-0"
-        >
-          <Listbox.Options className="absolute z-10 mt-1 max-h-60 w-full overflow-auto bg-white py-1 text-base shadow-lg ring-opacity-5 focus:outline-none sm:text-sm">
-            {selectedPerformance.dates.map((d) => (
-              <Listbox.Option
-                key={d.id}
-                value={d.id}
-                className={({ active }) =>
-                  `relative cursor-pointer select-none py-2 pl-3 pr-9 ${
-                    active ? "bg-(--pink) text-white" : "text-(--pink)"
-                  }`
-                }
-              >
-                {({ selected }) => (
-                  <>
-                    <span
-                      className={`block truncate ${
-                        selected ? "font-semibold" : ""
-                      }`}
-                    >
-                      {format(new Date(d.dateTime), "do MMMM yyyy, h.mma")}
-                    </span>
-                    {selected && (
-                      <span className="absolute inset-y-0 right-0 flex items-center pr-4 text-black">
-                        <HiCheck className="h-5 w-5" />
-                      </span>
-                    )}
-                  </>
-                )}
-              </Listbox.Option>
-            ))}
-          </Listbox.Options>
-        </Transition>
-      </div>
-    </Listbox>
-  </div>
-)}
-
-
-
-        {/* STEP 2: Choose reflection type */}
-        {selectedPerformanceId && (
+        {/* STEP 1.5: Choose Date */}
+        {selectedPerformance && selectedPerformance.dates.length > 0 && (
           <div className="space-y-2 mb-4">
-            <h2 className="text-lg font-semibold text-gray-800">
-              How would you like to reflect?
-            </h2>
+            <label className="block text-gray-700 font-medium">Date</label>
+            <Listbox value={selectedDateId} onChange={(val) => setSelectedDateId(val)}>
+              <div className="relative">
+                <Listbox.Button className="relative w-full cursor-pointer bg-(--pink) text-white font-semibold py-2 pl-3 pr-10 text-left focus:border-(--green) focus:ring focus:ring-(--green) focus:outline-none sm:text-sm">
+                  <span className="block truncate">
+                    {selectedDateId
+                      ? format(
+                          new Date(
+                            selectedPerformance.dates.find((d) => d.id === selectedDateId)?.dateTime
+                          ),
+                          "do MMMM yyyy, h.mma"
+                        )
+                      : "Select date"}
+                  </span>
+                  <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
+                    <HiChevronDown className="h-5 w-5 text-white" />
+                  </span>
+                </Listbox.Button>
+                <Transition
+                  as={Fragment}
+                  leave="transition ease-in duration-100"
+                  leaveFrom="opacity-100"
+                  leaveTo="opacity-0"
+                >
+                  <Listbox.Options className="absolute z-10 mt-1 max-h-60 w-full overflow-auto bg-white py-1 text-base shadow-lg ring-opacity-5 focus:outline-none sm:text-sm">
+                    {selectedPerformance.dates.map((d) => (
+                      <Listbox.Option
+                        key={d.id}
+                        value={d.id}
+                        className={({ active }) =>
+                          `relative cursor-pointer select-none py-2 pl-3 pr-9 ${
+                            active ? "bg-(--pink) text-white" : "text-(--pink)"
+                          }`
+                        }
+                      >
+                        {({ selected }) => (
+                          <>
+                            <span className={`block truncate ${selected ? "font-semibold" : ""}`}>
+                              {format(new Date(d.dateTime), "do MMMM yyyy, h.mma")}
+                            </span>
+                            {selected && (
+                              <span className="absolute inset-y-0 right-0 flex items-center pr-4 text-black">
+                                <HiCheck className="h-5 w-5" />
+                              </span>
+                            )}
+                          </>
+                        )}
+                      </Listbox.Option>
+                    ))}
+                  </Listbox.Options>
+                </Transition>
+              </div>
+            </Listbox>
+          </div>
+        )}
+
+        {/* STEP 2: Choose Reflection Type */}
+        {selectedPerformanceId && !mode && (
+          <div className="space-y-2 mb-4">
+            <h2 className="text-lg font-semibold text-gray-800">How would you like to reflect?</h2>
             <div className="flex flex-row-reverse items-center sm:flex-row gap-4 justify-around">
               <button
                 type="button"
                 onClick={() => setMode("voice")}
-                className="rounded-full shadow-lg  bg-(--peach) text-black py-2 px-4 w-30 h-30 border-3 border-(--pink) focus:outline-none focus:ring-3 focus:ring-white focus:border-none"
+                className="rounded-full shadow-lg bg-(--peach) text-black py-2 px-4 w-30 h-30 border-3 border-(--pink)"
               >
                 Voice note
               </button>
@@ -275,14 +274,14 @@ const Draft: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setMode("reflection")}
-                  className="flex shadow-lg  w-30 bg-(--lavender) text-black py-4 px-6 border-3 border-(--pink) focus:outline-none focus:ring-3 focus:ring-white focus:border-none"
+                  className="flex shadow-lg w-30 bg-(--lavender) text-black py-4 px-6 border-3 border-(--pink)"
                 >
                   Written reflection
                 </button>
                 <button
                   type="button"
                   onClick={() => setMode("prompts")}
-                  className="flex w-40 shadow-lg   bg-(--green) text-black border-3 border-(--pink)  py-6 px-4 focus:outline-none focus:ring-3 focus:ring-white focus:border-none"
+                  className="flex w-40 shadow-lg bg-(--green) text-black border-3 border-(--pink) py-6 px-4"
                 >
                   Answer prompts
                 </button>
@@ -291,105 +290,117 @@ const Draft: React.FC = () => {
           </div>
         )}
 
-        {/* STEP 3: Reflection Inputs */}
-        {mode === "reflection" && (
-          <div className="space-y-2">
-            <label className="block text-gray-700 font-medium"></label>
-            <textarea
-              value={content}
-              onChange={(e) => setContent(e.target.value)}
-              rows={6}
-              placeholder="Write here..."
-              className="w-full rounded bg-(--offwhite) text-(--colordark) border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:outline-none p-2"
-            />
-          </div>
-        )}
-
-        {mode === "voice" && (
-          <div className="space-y-2">
-            <h3 className="text-lg font-semibold text-gray-800">Voice Note</h3>
-            {!isRecording ? (
-              <button
-                type="button"
-                onClick={startRecording}
-                className="rounded bg-(--green) text-black py-2 px-4 hover:bg-green-700 focus:outline-none focus:ring focus:ring-green-200"
-              >
-               Start Recording
-              </button>
-            ) : (
-              <button
-                type="button"
-                onClick={stopRecording}
-                className="rounded bg-(--red) text-white py-2 px-4 hover:bg-(--red) focus:outline-none focus:ring focus:ring-(--red)"
-              >
-                ⏹ Stop Recording
-              </button>
-            )}
-            {audioUrl && (
-              <div className="flex items-center gap-2">
-                <audio controls src={audioUrl} className="flex-1" />
-                <button
-                  type="button"
-                  onClick={clearRecording}
-                  className="rounded bg-gray-200 text-gray-700 py-1 px-2 hover:bg-gray-300 focus:outline-none focus:ring focus:ring-gray-200"
-                >
-                  🗑️ Clear
-                </button>
-              </div>
-            )}
-          </div>
-        )}
-
-        {mode === "prompts" && selectedPerformance?.prompts && (
+        {/* STEP 3: Reflection Input (only chosen one visible) */}
+        {mode && (
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-gray-800">Reflection Prompts</h3>
-            {selectedPerformance.prompts.map((p) => (
-              <div key={p.id} className="space-y-1">
-                <label className="block text-gray-700">{p.text}</label>
+            {/* Clear & Start Again */}
+            <div className="flex justify-end">
+              <button
+                type="button"
+                onClick={clearAll}
+                className="text-sm text-(--pink) font-medium underline hover:text-(--green)"
+              >
+                Clear reflection type
+              </button>
+            </div>
+
+            {mode === "reflection" && (
+              <div className="space-y-2">
+                 <h3 className="text-lg font-semibold text-gray-800">Written Reflection</h3>
                 <textarea
-                  rows={3}
-                  value={promptAnswers[p.id] || ""}
-                  onChange={(e) =>
-                    setPromptAnswers((prev) => ({
-                      ...prev,
-                      [p.id]: e.target.value,
-                    }))
-                  }
-                  className="w-full rounded bg-(--offwhite) border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:outline-none p-2"
+                  value={content}
+                  onChange={(e) => setContent(e.target.value)}
+                  rows={6}
+                  placeholder="Write here..."
+                  className="w-full rounded bg-(--offwhite) text-(--colordark) border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:outline-none p-2"
                 />
               </div>
-            ))}
-          </div>
-        )}
+            )}
 
-        {mode && (
-          <>
-           {/* STEP 4: Colour Rating */}
-<div className="space-y-2 mb-4">
-  <label className="block text-gray-700 font-medium">Colour Rating</label>
-  <div className="flex items-center gap-3">
-    {[1, 2, 3, 4, 5].map((num) => (
-      <button
-        key={num}
-        type="button"
-        onClick={() => setColourRating(num)}
-        className={`w-8 h-8 rounded-full border-2 transition-transform transform hover:scale-110 ${
-          colourRating === num ? "border-white" : "border-transparent"
-        } ${colourClasses[num]}`}
-        title={`Colour ${num}`}
-      />
-    ))}
-  </div>
-</div>
+            {mode === "voice" && (
+              <div className="space-y-2">
+                <h3 className="text-lg font-semibold text-gray-800">Voice Note</h3>
+                {!isRecording ? (
+                  <button
+                    type="button"
+                    onClick={startRecording}
+                    className="rounded bg-(--green) text-black py-2 px-4 focus:outline-none"
+                  >
+                    🎙 Start Recording
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={stopRecording}
+                    className="rounded bg-(--red) text-white py-2 px-4"
+                  >
+                    ⏹ Stop Recording
+                  </button>
+                )}
+                {audioUrl && (
+                  <div className="flex items-center gap-2">
+                    <audio controls src={audioUrl} className="flex-1" />
+                    <button
+                      type="button"
+                      onClick={clearRecording}
+                      className="rounded bg-gray-200 text-gray-700 py-1 px-2 hover:bg-gray-300"
+                    >
+                      🗑️ Clear
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {mode === "prompts" && selectedPerformance?.prompts && (
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold text-gray-800">Reflection Prompts</h3>
+                {selectedPerformance.prompts.map((p) => (
+                  <div key={p.id} className="space-y-1">
+                    <label className="block text-gray-700">{p.text}</label>
+                    <textarea
+                      rows={3}
+                      value={promptAnswers[p.id] || ""}
+                      onChange={(e) =>
+                        setPromptAnswers((prev) => ({
+                          ...prev,
+                          [p.id]: e.target.value,
+                        }))
+                      }
+                      className="w-full rounded bg-(--offwhite) border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:outline-none p-2"
+                    />
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* STEP 4: Colour Rating */}
+            <div className="space-y-2 mb-4">
+              <label className="block text-gray-700 font-medium">Colour Rating</label>
+              <div className="flex items-center gap-3">
+                {[1, 2, 3, 4, 5].map((num) => (
+                  <button
+                    key={num}
+                    type="button"
+                    onClick={() => setColourRating(num)}
+                    className={`w-8 h-8 rounded-full border-2 transition-transform transform hover:scale-110 ${
+                      colourRating === num ? "border-white" : "border-transparent"
+                    } ${colourClasses[num]}`}
+                    title={`Colour ${num}`}
+                  />
+                ))}
+              </div>
+            </div>
 
             {error && <div className="text-red-600 font-medium mb-2">{error}</div>}
+
             <input
               type="submit"
               disabled={mode === "reflection" && !content}
               value="Create"
-              className="w-full rounded bg-(--button) text-white py-2 px-4 hover:bg-indigo-700 focus:outline-none focus:ring focus:ring-indigo-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full rounded bg-(--button) text-white py-2 px-4 focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
             />
-          </>
+          </div>
         )}
       </form>
     </Layout>
