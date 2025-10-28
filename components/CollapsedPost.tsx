@@ -18,6 +18,7 @@ const CollapsedPost: React.FC<{ post: PostProps }> = ({ post }) => {
       <div className="flex w-full gap-2">
       <div className="w-1/4">
         <img src="https://media.houseandgarden.co.uk/photos/6533f30248dabdf8da5de601/1:1/w_1080,h_1080,c_limit/Untitled%20design%20(55).png" alt="catcus"/>
+     
       </div>
     
      <div className="flex flex-col w-[50%]">

@@ -32,19 +32,21 @@ export default async function handler(req, res) {
       return res.status(403).json({ error: "Unauthorized" });
     }
 
-    const { name, location, dates, prompts } = req.body;
+    const { name, location, dates, prompts, imageUrl } = req.body;
 
     try {
       const performance = await prisma.performance.create({
         data: {
           name,
           location,
+          imageUrl,
           dates: {
             create: dates.map((d: string) => ({ dateTime: new Date(d) })),
           },
           prompts: {
             create: prompts.map((t: string) => ({ text: t })),
           },
+         
         },
         include: { dates: true, prompts: true },
       });

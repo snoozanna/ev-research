@@ -2,7 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { GetServerSideProps } from 'next';
 import { getAuth } from '@clerk/nextjs/server';
 import Layout from '../components/Layout';
-import { PostProps, colourClasses } from '../components/Post';
+import { PostProps, colourClasses, colourEmojis } from '../components/Post';
 import CollapsedPost from '../components/CollapsedPost';
 import prisma from '../lib/prisma';
 import CollapsedPostIt from '../components/CollapsedPostIt';
@@ -23,7 +23,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
     where: { author: { clerkId: userId } },
     include: {
       author: { select: { firstName: true, email: true } },
-      performance: { select: { id: true, name: true } },
+      performance: { select: { id: true, name: true, imageUrl: true } },
       performanceDate: { select: { id: true, dateTime: true } },
       promptAnswers: { include: { prompt: { select: { id: true, text: true } } } },
     },
@@ -139,7 +139,7 @@ const Reflections: React.FC<Props> = ({ drafts, isAuthenticated }) => {
           </select>
         {/* Colour filter */}
         <div className="flex items-center gap-3">
-  {[1, 2, 3, 4, 5].map((num) => (
+  {/* {[1, 2, 3, 4, 5].map((num) => (
     <button
       key={num}
       onClick={() => setColourFilter(num)}
@@ -150,7 +150,21 @@ const Reflections: React.FC<Props> = ({ drafts, isAuthenticated }) => {
       } ${colourClasses[num]}`}
       title={`Colour ${num}`}
     />
-  ))}
+  ))} */}
+{[1, 2, 3, 4, 5].map((num) => (
+  <button
+    key={num}
+    type="button"
+    onClick={() => setColourFilter(num)}
+    className={`text-2xl transition-transform transform hover:scale-125 ${
+      colourFilter === num ? "opacity-100" : "opacity-60"
+    }`}
+    title={`Rating ${num}`}
+  >
+    {colourEmojis[num]}
+  </button>
+))}
+  
 
   {/* Clear filter button */}
   <button

@@ -11,9 +11,7 @@ import {
   useUser,
 } from "@clerk/nextjs";
 import {
-  FaFileAlt,
   FaCalendarAlt,
-  FaPlus,
   FaSignOutAlt,
   FaSignInAlt,
   FaPencilAlt,

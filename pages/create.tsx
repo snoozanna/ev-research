@@ -3,7 +3,7 @@ import Layout from "../components/Layout";
 import Router from "next/router";
 import { Listbox, Transition } from "@headlessui/react";
 import { HiCheck, HiChevronDown } from "react-icons/hi";
-import { colourClasses } from "../components/Post";
+import { colourClasses, colourEmojis } from "../components/Post";
 import { format } from "date-fns";
 
 type PerformanceOption = {
@@ -266,22 +266,22 @@ const Draft: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setMode("voice")}
-                className="rounded-full shadow-lg bg-(--peach) text-black py-2 px-4 w-30 h-30 border-3 border-(--pink)"
+                className="rounded-full  bg-(--peach) text-black py-2 px-4 w-30 h-30 border-3 border-(--pink) shadow-[4px_6px_0px_rgba(0,0,0,0.15)] rotate-[2deg] hover:rotate-0 hover:shadow-[2px_3px_0px_rgba(0,0,0,0.2)] transition-all duration-200"
               >
                 Voice note
               </button>
-              <div className="flex flex-col gap-4">
+              <div className="flex flex-col gap-6">
                 <button
                   type="button"
                   onClick={() => setMode("reflection")}
-                  className="flex shadow-lg w-30 bg-(--lavender) text-black py-4 px-6 border-3 border-(--pink)"
+                  className="flex w-30 bg-(--lavender) text-black py-4 px-6 border-3 border-(--pink) shadow-[4px_6px_0px_rgba(0,0,0,0.15)] rotate-[2deg] hover:rotate-0 hover:shadow-[2px_3px_0px_rgba(0,0,0,0.2)] transition-all duration-200"
                 >
                   Written reflection
                 </button>
                 <button
                   type="button"
                   onClick={() => setMode("prompts")}
-                  className="flex w-40 shadow-lg bg-(--green) text-black border-3 border-(--pink) py-6 px-4"
+                  className="flex w-40 bg-(--green) text-black border-3 border-(--pink) shadow-[4px_6px_0px_rgba(0,0,0,0.15)] rotate-[-2deg] hover:rotate-0 hover:shadow-[2px_3px_0px_rgba(0,0,0,0.2)] transition-all duration-200 py-6 px-4"
                 >
                   Answer prompts
                 </button>
@@ -378,7 +378,7 @@ const Draft: React.FC = () => {
             <div className="space-y-2 mb-4">
               <label className="block text-gray-700 font-medium">Colour Rating</label>
               <div className="flex items-center gap-3">
-                {[1, 2, 3, 4, 5].map((num) => (
+                {/* {[1, 2, 3, 4, 5].map((num) => (
                   <button
                     key={num}
                     type="button"
@@ -388,7 +388,21 @@ const Draft: React.FC = () => {
                     } ${colourClasses[num]}`}
                     title={`Colour ${num}`}
                   />
-                ))}
+                ))} */}
+                {[1, 2, 3, 4, 5].map((num) => (
+  <button
+    key={num}
+    type="button"
+    onClick={() => setColourRating(num)}
+    className={`text-2xl transition-transform transform hover:scale-125 ${
+      colourRating === num ? "opacity-100" : "opacity-60"
+    }`}
+    title={`Rating ${num}`}
+  >
+    {colourEmojis[num]}
+  </button>
+))}
+
               </div>
             </div>
 

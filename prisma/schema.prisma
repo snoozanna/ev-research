@@ -16,6 +16,7 @@ model Performance {
   artist   User?             @relation(fields: [artistId], references: [id])
   dates    PerformanceDate[]
   posts    Post[]
+  imageUrl  String? 
   prompts  Prompt[]
 }
 

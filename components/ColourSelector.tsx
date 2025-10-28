@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { FaPalette } from 'react-icons/fa';
-import { colourClasses } from '../components/Post'; // ✅ reuse same shared colour mapping
+import { colourClasses, colourEmojis } from '../components/Post'; // ✅ reuse same shared colour mapping
 
 type ColourSelectorProps = {
   postId: string;
@@ -36,7 +36,7 @@ export const ColourSelector = ({ postId, initialColour }: ColourSelectorProps) =
     <div className="flex items-center gap-3">
      
       <div className="flex gap-2 items-center">
-        {[1, 2, 3, 4, 5].map((num) => (
+        {/* {[1, 2, 3, 4, 5].map((num) => (
           <button
             key={num}
             onClick={() => handleClick(num)}
@@ -46,7 +46,22 @@ export const ColourSelector = ({ postId, initialColour }: ColourSelectorProps) =
             } ${colourClasses[num]} ${isUpdating ? 'opacity-50 cursor-wait' : ''}`}
             title={`Colour ${num}`}
           />
-        ))}
+        ))} */}
+
+{[1, 2, 3, 4, 5].map((num) => (
+  <button
+    key={num}
+    type="button"
+    onClick={() => handleClick(num)}
+    className={`text-2xl transition-transform transform hover:scale-125 ${
+      colour === num ? "opacity-100" : "opacity-60"
+    }`}
+    title={`Rating ${num}`}
+  >
+    {colourEmojis[num]}
+  </button>
+))}
+        
       </div>
       {isUpdating && <span className="text-gray-500 text-sm">Updating...</span>}
     </div>

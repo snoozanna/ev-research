@@ -27,11 +27,11 @@
     --colordark: var(--davys-gray);
     --post-color: var(--peach);
     --button: var(--lavender);
-    --color1: var(--darkpink);
-    --color2: var(--blue);
-    --color3: var(--green);
-    --color4: var(--brightorange);
-    --color5: var(--red);
+    --color1: #cc0033;
+    --color2: var(--red);
+    --color3: #990066;
+    --color4: #660099;
+    --color5: var(--blue);
   }
 
 html {

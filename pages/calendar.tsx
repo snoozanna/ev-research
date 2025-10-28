@@ -20,7 +20,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
     where: { author: { clerkId: userId } },
     include: {
       author: { select: { firstName: true, email: true } },
-      performance: { select: { id: true, name: true } },
+      performance: { select: { id: true, name: true, imageUrl: true } },
       performanceDate: { select: { id: true, dateTime: true } },
       promptAnswers: {
         include: {

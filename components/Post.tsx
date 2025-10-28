@@ -9,6 +9,7 @@ export type PostProps = {
   performance?: {
     id: string;
     name: string;
+    imageUrl?: string;
   } | null;
   performanceDate?: {
     id: string;
@@ -40,6 +41,14 @@ export const colourClasses = {
   3: "bg-(--color3)",
   4: "bg-(--color4)",
   5: "bg-(--color5)",
+} as const;
+
+export const colourEmojis = {
+  1: "🥶",  
+  2: "🌶️",  
+  3: "🦭", 
+  4: "🫨",  
+  5: "❌",  
 } as const;
 
 const Post: React.FC<{ post: PostProps }> = ({ post }) => {
@@ -120,8 +129,8 @@ const Post: React.FC<{ post: PostProps }> = ({ post }) => {
       )}
        {/* Created At */}
        <div className="w-full flex flex-col justify-end items-end"><p className="text-sm">{formattedDate}</p>
-       <span className="text-sm">By {authorName}</span></div>
-         {/* Author */}
+       {authorName &&( <span className="text-sm">By {authorName}</span>)}
+       </div>
      
     </div>
   );
