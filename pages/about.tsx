@@ -41,7 +41,7 @@ if (!isAuthenticated) {
       <div className="page">
 
         <main>
-        <h1 className='text-2xl font-bold mb-6'>About</h1>
+        <h1 className='text-2xl font-bold mb-6 text-(--teal)'>About</h1>
     <p className='mb-2'>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean eleifend lorem sed diam efficitur, eget feugiat urna fringilla. Vestibulum posuere aliquet nibh ac pharetra. </p>
    <p className='mb-2'>Aliquam gravida, urna eu volutpat maximus, justo leo lobortis sem, vel blandit nunc massa et turpis. Sed vehicula lectus ut risus suscipit ornare. Proin egestas quis dui non viverra.</p> 
    <p className='mb-2'>Maecenas in sollicitudin urna. Pellentesque vehicula risus lorem, sit amet facilisis turpis accumsan et. Duis facilisis metus ac nisi dignissim, eget condimentum ipsum tempus.</p>

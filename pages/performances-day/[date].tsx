@@ -26,9 +26,11 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res, params 
 
   const posts = await prisma.post.findMany({
     where: {
-      createdAt: {
-        gte: startOfDay(day),
-        lte: endOfDay(day),
+      performanceDate: {
+        dateTime: {
+          gte: startOfDay(day),
+          lte: endOfDay(day),
+        },
       },
     },
     include: {
@@ -72,7 +74,7 @@ const DayPage: React.FC<Props> = ({ posts, date }) => {
 
   return (
     <Layout>
-      <h1 className="text-2xl font-bold mb-6">Reflections I made on {formattedPerfDate}</h1>
+      <h1 className="text-2xl font-bold mb-6">Performances I saw on {formattedPerfDate}</h1>
       {Object.entries(grouped).map(([performance, posts]) => (
         <div key={performance} className="flex flex-col gap-3 mb-4">
          

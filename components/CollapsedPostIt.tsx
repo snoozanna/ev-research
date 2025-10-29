@@ -13,12 +13,12 @@ const CollapsedPostIt: React.FC<{ post: PostProps }> = ({ post }) => {
   const daysAgo = formatDistance(new Date(createdAtDate), new Date(), { addSuffix: true })
   const rotations = ['-2deg', '1deg', '-3deg', '2deg'];
 const rotate = rotations[Math.floor(Math.random() * rotations.length)];
-console.log("post.performance.imageUrl", post.performance.imageUrl)
 
   return (
     <Link
     href={`/p/${post.id}`}
-      className={`p-2  flex flex-row gap-1 bg-(--post-color)  rounded-md shadow-[4px_6px_0px_rgba(0,0,0,0.15)] rotate-[2deg] hover:rotate-0 hover:shadow-[2px_3px_0px_rgba(0,0,0,0.2)] transition-all duration-200`}
+      className={`p-2  flex flex-row gap-1 bg-(--post-color) size-fit
+ rounded-md shadow-[4px_6px_0px_rgba(0,0,0,0.15)] rotate-[2deg] hover:rotate-0 hover:shadow-[2px_3px_0px_rgba(0,0,0,0.2)] transition-all duration-200`}
       style={{ transform: `rotate(${rotate})` }}
     >
       <div className="flex w-full gap-2 flex-col">

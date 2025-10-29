@@ -35,15 +35,23 @@ export const getServerSideProps: GetServerSideProps = async ({ req, params }) =>
     },
   });
 
-  // if (!post || post.author.clerkId !== userId) {
-  //   return {
-  //     notFound: true,
-  //   };
-  // }
-
-  return {
-    props: { post },
-  };
+ // Convert Date object to ISO strings
+ const serializedPost = {
+  ...post,
+  createdAt: post.createdAt?.toISOString?.() ?? null,
+  performanceDate: post.performanceDate
+    ? {
+        ...post.performanceDate,
+        dateTime: post.performanceDate.dateTime
+          ? post.performanceDate.dateTime.toISOString()
+          : null,
+      }
+    : null,
+};
+  
+return {
+  props: { post: serializedPost },
+};
 };
 
 type Props = {
@@ -95,7 +103,7 @@ const ReflectionPage: React.FC<Props> = ({ post }) => {
         </div>
       </div>
       <Link href={`/reflections`}
-      className={`p-2  mb-2  flex flex-row gap-1 `}>Back</Link>
+      className={`p-2  mb-2  flex flex-row gap-1 `}>{"<-"} Back</Link>
     </Layout>
   );
 };

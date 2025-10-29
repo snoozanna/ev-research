@@ -7,28 +7,40 @@ import { PostProps, colourClasses } from '../components/Post';
 
 type Props = {
   posts: PostProps[];
+  mode: string
 };
 
-const PerformanceCalendar: React.FC<Props> = ({ posts }) => {
+const PerformanceCalendar: React.FC<Props> = ({ posts, mode }) => {
   const [value, setValue] = useState<Date | null>(new Date());
   const router = useRouter();
 
   const handleDateClick = (date: Date) => {
     const formatted = format(date, 'yyyy-MM-dd');
-    router.push(`/day/${formatted}`);
+  
+    if (mode === 'performance') {
+      router.push(`/performances-day/${formatted}`);
+    } else {
+      router.push(`/day/${formatted}`);
+    }
   };
 
   const tileClassName = ({ date }: { date: Date }) => {
-    const matchingPost = posts.find(
-      (post) =>
-        post.performanceDate &&
-        isSameDay(new Date(post.performanceDate.dateTime), date)
-    );
-    console.log("matchingPost", matchingPost)
-    if (!matchingPost) return '';
-   
-    // Return a class like `colour-1` etc., based on your mapping
-    return `highlight color-${matchingPost.colourRating || 3}`;
+    const matchingPost = posts.find((post) => {
+      if (mode === "performance" && post.performanceDate?.dateTime) {
+        return isSameDay(new Date(post.performanceDate.dateTime), date);
+      }
+      if (mode === "reflection" && post.createdAt) {
+        return isSameDay(new Date(post.createdAt), date);
+      }
+      return false;
+    });
+  
+    if (!matchingPost) return "";
+  
+    // Return mode-specific color class
+    return mode === "performance"
+      ? "highlight color-cal-perf"
+      : "highlight color-cal-refl";
   };
 
   return (
@@ -40,21 +52,27 @@ const PerformanceCalendar: React.FC<Props> = ({ posts }) => {
         value={value}
         tileClassName={tileClassName}
         onClickDay={handleDateClick}
-        className="text-black"
+        
       />
 
       <style jsx global>{`
         .react-calendar{
         background:none;
-        border:solid 1px var(--green);
+        border:solid 2px var(--green);
+        font-family: inherit;
+         color: var(--greyblack)
         }
 
         .react-calendar__tile {
    
         }
+        .react-calendar__tile--active{
+        background-color: var(--peach) !important;
+        color: var(--greyblack)
+        }
 
         .react-calendar button{
-        border: solid 1px var(--green);
+        border: solid 2px var(--green);
         }
 
         /* Highlighted tile base */
@@ -62,22 +80,23 @@ const PerformanceCalendar: React.FC<Props> = ({ posts }) => {
           color: black !important;
         }
 
+        .react-calendar__month-view__days__day--weekend{
+        color: var(--darkpink);
+        }
+
+        abbr:where([title]){
+        text-decoration: none
+        }
+
         /* Example colours (match your colourClasses mapping) */
-        .color-1 {
-          background-color: var(--color1) !important;
+        .color-cal-perf {
+          background-color: var(--darkpink) !important;
         }
-        .color-2 {
-          background-color: var(--color2) !important;
+
+         .color-cal-refl {
+          background-color: var(--lavender) !important;
         }
-        .color-3 {
-          background-color: var(--color3) !important;
-        }
-        .color-4 {
-          background-color: var(--color4) !important;
-        }
-        .color-5 {
-          background-color: var(--color5) !important;
-        }
+        
       `}</style>
     </div>
   );

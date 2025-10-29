@@ -3,7 +3,6 @@ import { GetServerSideProps } from 'next';
 import { getAuth } from '@clerk/nextjs/server';
 import Layout from '../components/Layout';
 import { PostProps, colourClasses, colourEmojis } from '../components/Post';
-import CollapsedPost from '../components/CollapsedPost';
 import prisma from '../lib/prisma';
 import CollapsedPostIt from '../components/CollapsedPostIt';
 
@@ -13,13 +12,15 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
   const { userId } = getAuth(req);
 
   if (!userId) {
-    res.statusCode = 403;
-    return { 
-      props: { drafts: [], isAuthenticated: false } 
+    return {
+      redirect: {
+        destination: '/sign-in',
+        permanent: false,
+      },
     };
   }
 
-  const drafts = await prisma.post.findMany({
+  const myPosts = await prisma.post.findMany({
     where: { author: { clerkId: userId } },
     include: {
       author: { select: { firstName: true, email: true } },
@@ -29,21 +30,36 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
     },
   });
 
+  // Convert Date objects to ISO strings
+  const serializedPosts = myPosts.map((post) => ({
+    ...post,
+    createdAt: post.createdAt?.toISOString?.() ?? null,
+    performanceDate: post.performanceDate
+      ? {
+          ...post.performanceDate,
+          dateTime: post.performanceDate.dateTime
+            ? post.performanceDate.dateTime.toISOString()
+            : null,
+        }
+      : null,
+  }));
+  
+
   return { 
     props: { 
-      drafts,
+      myPosts: serializedPosts,
       isAuthenticated: true 
     } 
   };
 };
 
-type Props = { drafts: PostProps[];
+type Props = { myPosts: PostProps[];
   isAuthenticated: boolean;
  };
 
-const Reflections: React.FC<Props> = ({ drafts, isAuthenticated }) => {
+const Reflections: React.FC<Props> = ({ myPosts, isAuthenticated }) => {
 
-  const [draftPosts, setDraftPosts] = useState(drafts);
+  const [draftPosts, setDraftPosts] = useState(myPosts);
 
   // Filter states
   const [selectedPerformance, setSelectedPerformance] = useState<string>('all');
@@ -53,13 +69,13 @@ const Reflections: React.FC<Props> = ({ drafts, isAuthenticated }) => {
   // Get unique performances for dropdown
   const performances = useMemo(() => {
     const unique = new Map<string, string>();
-    drafts.forEach((d) => {
+    myPosts.forEach((d) => {
       if (d.performance?.id && d.performance?.name) {
         unique.set(d.performance.id, d.performance.name);
       }
     });
     return Array.from(unique.entries()).map(([id, name]) => ({ id, name }));
-  }, [drafts]);
+  }, [myPosts]);
 
   // Filtered posts
   const filteredPosts = useMemo(() => {
@@ -183,7 +199,7 @@ const Reflections: React.FC<Props> = ({ drafts, isAuthenticated }) => {
             {filteredPosts.map((post) => (
                  <CollapsedPostIt key={post.id} post={post} />
           ))}
-            {filteredPosts.length === 0 && <p className="text-gray-500">No reflections found.</p>}
+            {filteredPosts.length === 0 && <p className="text-(--greyblack)">No reflections found.</p>}
           </div>
         </main>
       </div>

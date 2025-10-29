@@ -14,7 +14,7 @@ const Blog: React.FC = () => {
       <div className="container mx-auto px-4 py-8">
         
 
-      <main className="flex flex-wrap gap-6 justify-center p-2">
+      <main className="flex flex-wrap gap-12 justify-center p-2">
   <Link href="/create" className="w-full sm:w-1/2 md:w-1/3">
     <button
       type="button"

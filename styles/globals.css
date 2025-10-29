@@ -18,13 +18,14 @@
     --blue: #52a5cf;
     --teal: #44b3a7;
     --red: #fa5c2d;
+    --greyblack: #2c333d;
     --deletered: #ec584a;
     --brightorange:#faa02e;
     --yellow: #efce7b;
     --bg: var(--yellow);
     --icon-active: var(--darkpink);
     --color: var(--orange);
-    --colordark: var(--davys-gray);
+    --darktext: var(--greyblack);
     --post-color: var(--peach);
     --button: var(--lavender);
     --color1: #cc0033;

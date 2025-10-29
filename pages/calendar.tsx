@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { GetServerSideProps } from 'next';
 import Layout from '../components/Layout';
 import { PostProps } from '../components/Post';
@@ -8,13 +8,16 @@ import { getAuth } from '@clerk/nextjs/server';
 
 export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
    const { userId } = getAuth(req);
+
   
-    if (!userId) {
-      res.statusCode = 403;
-      return { 
-        props: { myPosts: [], isAuthenticated: false } 
-      };
-    }
+   if (!userId) {
+    return {
+      redirect: {
+        destination: '/sign-in',
+        permanent: false,
+      },
+    };
+  }
 
   const myPosts = await prisma.post.findMany({
     where: { author: { clerkId: userId } },
@@ -29,8 +32,21 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
       },
     },
   });
+   // Convert Date objects to ISO strings
+   const serializedPosts = myPosts.map((post) => ({
+    ...post,
+    createdAt: post.createdAt?.toISOString?.() ?? null,
+    performanceDate: post.performanceDate
+      ? {
+          ...post.performanceDate,
+          dateTime: post.performanceDate.dateTime
+            ? post.performanceDate.dateTime.toISOString()
+            : null,
+        }
+      : null,
+  }));
 
-  return { props: { myPosts,  isAuthenticated: true  } };
+  return { props: { myPosts: serializedPosts,  isAuthenticated: true  } };
 };
 
 type Props = {
@@ -40,6 +56,17 @@ type Props = {
 
 
 const CalendarPage: React.FC<Props> = ({ myPosts, isAuthenticated }) => {
+  const [mode, setMode] = useState<"performance" | "reflection">("performance");
+
+const toggle = () => {
+  if (mode === "performance"){
+    setMode("reflection")
+  }
+  else {
+    setMode("performance")
+  }  
+}
+
 if (!isAuthenticated) {
   return (
     <Layout>
@@ -55,7 +82,33 @@ if (!isAuthenticated) {
       <div className="page">
         <h1 className='text-2xl font-bold mb-6'>My Calendar</h1>
         <main>
-           <Calendar posts={myPosts}/> 
+    
+        <div className="flex items-center gap-2 mb-4">
+  <button
+    onClick={toggle}
+    role="switch"
+    aria-checked={mode === "performance"}
+    className={`relative inline-flex items-center h-7 w-14 rounded-full transition-colors duration-300 focus:outline-none p-0 ${
+      mode === "performance"
+        ? 'bg-(--darkpink)'
+        : 'bg-(--lavender)'
+    }`}
+  >
+    <span
+      className={`inline-block w-6 h-6 bg-white rounded-full shadow-md transform transition-transform duration-300 ease-out ${
+        mode === "performance" ? 'translate-x-7' : 'translate-x-1'
+      }`}
+    />
+  </button>
+
+  <span className="text-(--greyblack) text-sm font-medium select-none">
+    {mode === "performance"
+      ? 'Days I saw performances'
+      : 'Days I made reflections'}
+  </span>
+</div>
+
+           <Calendar posts={myPosts} mode={mode}/> 
         </main>
       </div>
 
@@ -74,10 +127,10 @@ if (!isAuthenticated) {
           margin-top: 1rem;
         }
         button {
-          background: #ececec;
+
           border: 0;
           border-radius: 0.25rem;
-          padding: 0.5rem 1rem;
+   
         }
         button + button {
           margin-left: 0.5rem;

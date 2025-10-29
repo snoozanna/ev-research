@@ -1,10 +1,10 @@
 import React from "react";
 import ReactMarkdown from "react-markdown";
 import { format } from "date-fns";
+import { useUser } from "@clerk/nextjs";
 
 export type PostProps = {
   id: string;
-
   createdAt: string;
   performance?: {
     id: string;
@@ -52,8 +52,8 @@ export const colourEmojis = {
 } as const;
 
 const Post: React.FC<{ post: PostProps }> = ({ post }) => {
-  const authorName = post.author?.firstName || "Unknown author";
 
+  const authorName = post.author?.firstName || "Unknown author";
   const createdAtDate = new Date(post.createdAt);
   const formattedDate = format(createdAtDate, "PPpp");
 
@@ -84,10 +84,12 @@ const Post: React.FC<{ post: PostProps }> = ({ post }) => {
       {/* Free Reflection */}
       {post.content && (
         <div className="mt-4">
-          <h3 className="text-xl font-semibold mb-2">Reflection</h3>
-          <ReactMarkdown className="prose prose-sm max-w-full" >
-            {post.content}
-          </ReactMarkdown>
+          <h3 className="text-xl font-semibold mb-2 text-(--teal)">Written Reflection</h3>
+          <div className="bg-(--lavender) p-4 text-(--greyblack) mb-4">
+            <ReactMarkdown className="prose prose-sm max-w-full" >
+              {post.content}
+            </ReactMarkdown>
+          </div>
         </div>
       )}
 
@@ -97,11 +99,11 @@ const Post: React.FC<{ post: PostProps }> = ({ post }) => {
           className="mt-4"
           onClick={(e) => e.stopPropagation()}
         >
-          <h3 className="text-xl font-semibold mb-2">Voice Note</h3>
+          <h3 className="text-xl font-semibold mb-4 text-(--teal)">Voice Note</h3>
           <audio
             controls
             preload="none"
-            className="w-full max-w-md rounded-lg mb-2"
+            className="w-full max-w-md rounded-lg mb-6"
           >
             <source src={post.voiceNoteUrl} type="audio/mpeg" />
             Your browser does not support the audio element.
@@ -119,7 +121,7 @@ const Post: React.FC<{ post: PostProps }> = ({ post }) => {
               className="border-l-4 border-(--teal) pl-4 py-2"
             >
               {answer.prompt?.text && (
-                <p className="font-semibold">{answer.prompt.text}</p>
+                <p className="font-semibol text-(--teal)">{answer.prompt.text}</p>
               )}
               <p>{answer.text}</p>
             </div>

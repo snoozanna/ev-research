@@ -34,7 +34,7 @@ export const ShareToggle = ({ postId, initialState }: { postId: string; initialS
             }`}
           />
         </button>
-        <span className="text-gray-700 select-none">{enabled ? 'Shared with artist' : 'Not shared with artist'}</span>
+        <span className="text-gray-700 select-none text-sm">{enabled ? 'Shared with artist' : 'Not shared with artist'}</span>
       </div>
     );
   };

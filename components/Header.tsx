@@ -55,7 +55,7 @@ const userName = user?.username
         <span className="w-full text-center text-(--teal) italic">{userName}'s</span>)}
         <h1 className="uppercase text-center mb-0 text-2xl">Performance Journal</h1></div>
       {/* LEFT SIDE: Nav Links */}
-      <div className="border-t-2 border-(--green) w-full flex p-2">
+      <div className="border-t-3 border-(--green) w-full flex p-3">
         <div className="flex items-center w-full justify-around">
         <Link
           href="/"
