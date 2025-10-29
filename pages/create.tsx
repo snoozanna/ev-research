@@ -18,6 +18,7 @@ type Mode = "voice" | "reflection" | "prompts" | "";
 const Draft: React.FC = () => {
   const [content, setContent] = useState("");
   const [error, setError] = useState("");
+  const [dateError, setDateError] = useState("");
   const [promptAnswers, setPromptAnswers] = useState<Record<string, string>>({});
   const [selectedPerformanceId, setSelectedPerformanceId] = useState<string>("");
   const [selectedDateId, setSelectedDateId] = useState<string>("");
@@ -97,6 +98,16 @@ const Draft: React.FC = () => {
   const submitData = async (e: React.SyntheticEvent) => {
     e.preventDefault();
     setError("");
+    // Require performance and date
+  if (!selectedPerformanceId) {
+    setError("Please select a performance before continuing.");
+    return;
+  }
+
+  if (!selectedDateId) {
+    setDateError("Please select a performance date before continuing.");
+    return;
+  }
     try {
       const formData = new FormData();
       formData.append("content", content);
@@ -255,6 +266,7 @@ const Draft: React.FC = () => {
                 </Transition>
               </div>
             </Listbox>
+            {dateError && <p className="text-(--red) text-sm mt-1">{dateError}</p>}
           </div>
         )}
 
