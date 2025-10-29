@@ -278,13 +278,13 @@ const Draft: React.FC = () => {
                 >
                   Written reflection
                 </button>
-                <button
+                {selectedPerformance?.prompts.length > 0 && <button
                   type="button"
                   onClick={() => setMode("prompts")}
                   className="flex w-40 bg-(--green) text-(--darktext) border-3 border-(--pink) shadow-[4px_6px_0px_rgba(0,0,0,0.15)] rotate-[-2deg] hover:rotate-0 hover:shadow-[2px_3px_0px_rgba(0,0,0,0.2)] transition-all duration-200 py-6 px-4"
                 >
                   Answer prompts
-                </button>
+                </button>}
               </div>
             </div>
           </div>
