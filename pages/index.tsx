@@ -8,13 +8,23 @@ import { useUser } from "@clerk/nextjs";
 const Blog: React.FC = () => {
   const { isSignedIn, user, isLoaded } = useUser();
   console.log("user", user)
+  if (!isSignedIn) {
+    return (
+      <Layout>
+        <div className="text-gray-700">You need to sign in to view this page.</div>
+      </Layout>
+    );
+  }
   return (
+
+    
     
     <Layout>
       <div className="container mx-auto px-4 py-8">
         
 
       <main className="flex flex-wrap gap-12 justify-center p-2">
+     
   <Link href="/create" className="w-full sm:w-1/2 md:w-1/3">
     <button
       type="button"
