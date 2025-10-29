@@ -13,7 +13,7 @@ const CollapsedPostIt: React.FC<{ post: PostProps }> = ({ post }) => {
   const daysAgo = formatDistance(new Date(createdAtDate), new Date(), { addSuffix: true })
   const rotations = ['-2deg', '1deg', '-3deg', '2deg'];
 const rotate = rotations[Math.floor(Math.random() * rotations.length)];
-
+ console.log("post.voiceNoteUrl", post.voiceNoteUrl)
   return (
     <Link
     href={`/p/${post.id}`}

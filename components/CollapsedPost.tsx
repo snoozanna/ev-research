@@ -10,7 +10,7 @@ const CollapsedPost: React.FC<{ post: PostProps }> = ({ post }) => {
   ? format(new Date(post.performanceDate.dateTime), "EEE dd MMM yyyy")
   : null;
   const daysAgo = formatDistance(subDays(new Date(post.createdAt), 3), new Date(), { addSuffix: true })
-
+console.log("post", post)
   return (
     <Link
     href={`/p/${post.id}`}
@@ -43,21 +43,21 @@ const CollapsedPost: React.FC<{ post: PostProps }> = ({ post }) => {
      <div className="flex  gap-2 w-full">
       
       <div className="flex flex-col gap-3 w-1/2 items-center justify-center">
-        {post.content && (
+      {post.content && (
           <div
-            className="w-5 h-5 bg-indigo-500 rounded-sm"
+            className="w-5 h-5 bg-(--lavender) rounded-sm"
             title="Reflection"
           />
         )}
         {post.voiceNoteUrl && (
           <div
-            className="w-5 h-5 bg-pink-500 rounded-full"
+            className="w-5 h-5 bg-(--peach) rounded-full"
             title="Voice Note"
           />
         )}
         {post.promptAnswers && post.promptAnswers.length > 0 && (
           <div
-            className="w-8 h-4 bg-teal-500 rounded-md"
+            className="w-8 h-4 bg-(--green) rounded-md"
             title="Prompt Answers"
           />
         )}

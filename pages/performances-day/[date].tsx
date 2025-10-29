@@ -37,6 +37,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res, params 
       author: { select: { firstName: true, email: true } },
       performance: { select: { id: true, name: true, imageUrl: true } },
       performanceDate: { select: { id: true, dateTime: true } },
+      promptAnswers: { include: { prompt: { select: { id: true, text: true } } } },
     },
     orderBy: {
       performance: { name: 'asc' }, // group/order by performance
