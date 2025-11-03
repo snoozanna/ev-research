@@ -5,6 +5,7 @@ import Layout from '../components/Layout';
 import { PostProps, colourEmojis } from '../components/Post';
 import prisma from '../lib/prisma';
 import CollapsedPostIt from '../components/CollapsedPostIt';
+import FilterBar from '../components/FilterBar';
 
 
 
@@ -127,58 +128,7 @@ const Reflections: React.FC<Props> = ({ myPosts, isAuthenticated }) => {
       <div className="max-w-3xl mx-auto">
         <h1 className="text-2xl font-bold mb-6">My Reflections</h1>
 
-        {/* FILTER BAR */}
-        <div className="flex flex-wrap gap-4 mb-6 items-center text-sm">
-          {/* Performance filter */}
-          <select
-            value={selectedPerformance}
-            onChange={(e) => setSelectedPerformance(e.target.value)}
-            className="p-2 border rounded-md"
-          >
-            <option value="all">All Performances</option>
-            {performances.map((perf) => (
-              <option key={perf.id} value={perf.id}>
-                {perf.name}
-              </option>
-            ))}
-          </select>
-
-          {/* Shared filter */}
-          <select
-            value={sharedFilter}
-            onChange={(e) => setSharedFilter(e.target.value as 'all' | 'shared' | 'not_shared')}
-            className="p-2 border rounded-md"
-          >
-            <option value="all">All</option>
-            <option value="shared">Shared with artist</option>
-            <option value="not_shared">Not shared</option>
-          </select>
-        {/* Colour filter */}
-        <div className="flex items-center gap-3 flex-wrap">
-{[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((num) => (
-  <button
-    key={num}
-    type="button"
-    onClick={() => setColourFilter(num)}
-    className={`text-2xl transition-transform transform hover:scale-125 ${
-      colourFilter === num ? "opacity-100 scale-150" : "opacity-60"
-    }`}
-    title={`Rating ${num}`}
-  >
-    {colourEmojis[num]}
-  </button>
-))}
-
-</div>
-  {/* Clear filter button */}
-  <button
-    onClick={() => setColourFilter('all')}
-    className=" px-2 py-1 border rounded-md text-xs text-gray-700 hover:bg-gray-100"
-  >
-    Clear
-  </button>
-        </div>
-
+    <FilterBar selectedPerformance={selectedPerformance}  setSelectedPerformance = {setSelectedPerformance}  performances={performances}  sharedFilter={sharedFilter}  setSharedFilter={setSharedFilter}  setColourFilter={setColourFilter}  colourFilter={colourFilter}/>
 
         {/* POSTS */}
         <main className="space-y-6">

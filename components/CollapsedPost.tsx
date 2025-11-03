@@ -3,6 +3,7 @@ import { format, formatDistance, formatRelative, subDays } from 'date-fns'
 import { PostProps, colourClasses, colourEmojis } from "./Post";
 import Link from "next/link";
 import Image from 'next/image'
+import { FaAlignJustify, FaRegComments, FaVoicemail } from "react-icons/fa";
 
 const CollapsedPost: React.FC<{ post: PostProps }> = ({ post }) => {
   const createdAtDate = new Date(post.createdAt);
@@ -42,25 +43,31 @@ console.log("post", post)
       <div className="flex flex-col justify-between">
      <div className="flex  gap-2 w-full">
       
-      <div className="flex flex-col gap-3 w-1/2 items-center justify-center">
+      <div className="flex flex-col gap-3 w-1/2 items-center justify-center text-(--greyblack) text-lg">
       {post.content && (
-          <div
-            className="w-5 h-5 bg-(--lavender) rounded-sm"
-            title="Reflection"
-          />
-        )}
-        {post.voiceNoteUrl && (
-          <div
-            className="w-5 h-5 bg-(--peach) rounded-full"
-            title="Voice Note"
-          />
-        )}
-        {post.promptAnswers && post.promptAnswers.length > 0 && (
-          <div
-            className="w-8 h-4 bg-(--green) rounded-md"
-            title="Prompt Answers"
-          />
-        )}
+                <div
+                  className=""
+                  title="Reflection"
+                ><FaAlignJustify/></div>
+              )}
+              {post.voiceNoteUrl && (
+                <div
+                  className=""
+                  title="Voice Note"
+                >
+                  <FaVoicemail />
+      
+                </div>
+              )}
+              {post.promptAnswers && post.promptAnswers.length > 0 && (
+                <div
+                  className=""
+                  title="Prompt Answers"
+                >
+                  <FaRegComments />
+      
+                </div>
+              )}
       </div>
       <div className="flex items-center justify-center w-1/2 ">
         {post.colourRating &&  (

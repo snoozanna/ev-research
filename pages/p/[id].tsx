@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState} from "react";
 import { GetServerSideProps } from "next";
 import { getAuth } from "@clerk/nextjs/server";
 import Layout from "../../components/Layout";
@@ -60,6 +60,7 @@ type Props = {
 
 const ReflectionPage: React.FC<Props> = ({ post }) => {
   const router = useRouter();
+  const [colour, setColour] = useState<number>(Number(post.colourRating) || 3);
 
   const deletePost = async (id: string) => {
     const confirmed = window.confirm("Are you sure you want to delete this reflection?");
@@ -81,13 +82,14 @@ const ReflectionPage: React.FC<Props> = ({ post }) => {
       
 
         {/* Reflection content */}
-        <Post post={post} />
+        <Post post={post} colour={colour} />
+
 
         {/* Toggles section */}
         <div className="flex flex-wrap items-center justify-between gap-6 pt-4 border-t">
           <div className="flex flex-wrap items-center gap-4">
            
-            <ColourSelector postId={post.id} initialColour={post.colourRating ?? 3} />
+            <ColourSelector postId={post.id} colour={colour} onColourChange={setColour}/>
           </div>
 
           <div className="w-full flex justify-between">

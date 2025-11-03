@@ -15,7 +15,7 @@ const CollapsedPostIt: React.FC<{ post: PostProps }> = ({ post }) => {
   const daysAgo = formatDistance(new Date(createdAtDate), new Date(), { addSuffix: true })
   const rotations = ['-2deg', '1deg', '-3deg', '2deg'];
 const rotate = rotations[Math.floor(Math.random() * rotations.length)];
- console.log("post.voiceNoteUrl", post.voiceNoteUrl)
+
   return (
     <Link
     href={`/p/${post.id}`}
@@ -34,13 +34,28 @@ const rotate = rotations[Math.floor(Math.random() * rotations.length)];
     />
         </div>
         <div className="flex flex-col justify-between w-1/2 gap-1">
-        <div className="w-full text-xs flex text-right  flex-col"><span>Created</span> <span>{daysAgo}</span></div>
+        <div className="w-full text-xs flex text-right  flex-col text-(--greyblack)"><span>Created</span> <span>{daysAgo}</span></div>
     
-         {/* Type Indicators */}
-      <div className="flex flex-col justify-between w-full">
-     <div className="flex  gap-2 w-full">
+    
+  
+
+  </div>
+ </div>
+ </div>
+
+ {/* Performance Info */}
+ {post.performance?.name && (
+          <h2 className="text-xl font-bold uppercase">
+            {post.performance.name}
+          </h2>
+        )}
+       
+       <div className="w-full">{formattedPerfDate && <p className="text-xs text-(--orange)">{formattedPerfDate}</p>}
+     </div>
+     <div className="flex gap-2 justify-between w-full items-center">
+    {/* Type Indicators */}
       
-      <div className="flex flex-col gap-3 w-1/2 items-center justify-center text-(--greyblack)">
+      <div className="flex gap-3 items-start justify-center text-(--greyblack) text-2xl">
         {post.content && (
           <div
             className=""
@@ -66,33 +81,13 @@ const rotate = rotations[Math.floor(Math.random() * rotations.length)];
           </div>
         )}
       </div>
-      <div className="flex items-center justify-center w-1/2 ">
-        {/* {post.colourRating &&  (
-            <div
-              className={`w-8 h-8 rounded-full ${colourClasses[post.colourRating || 3]}`}
-              title="Colour rating"
-            />
-          )} */}
+      <div className="flex items-center justify-center ">
           {post.colourRating && (
-  <div className="mt-2 text-3xl">
-    {colourEmojis[Number(post.colourRating) as keyof typeof colourEmojis]}
-  </div>
-)}
+        <div className=" text-3xl">
+          {colourEmojis[Number(post.colourRating) as keyof typeof colourEmojis]}
+        </div>
+      )}
       </div>
-      </div>
-  </div>
- </div>
- </div>
-
- {/* Performance Info */}
- {post.performance?.name && (
-          <h2 className="text-xl font-bold uppercase">
-            {post.performance.name}
-          </h2>
-        )}
-       
-       <div className="w-full">{formattedPerfDate && <p className="text-sm text-gray-600">{formattedPerfDate}</p>}
-     </div>
       </div>
 
        

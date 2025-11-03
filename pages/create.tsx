@@ -295,14 +295,14 @@ console.log("promptAnswers", promptAnswers)
                 <button
                   type="button"
                   onClick={() => setMode("reflection")}
-                  className="flex w-full bg-(--lavender) text-(--darktext) py-4 px-6 border-3 border-(--pink) shadow-[4px_6px_0px_rgba(0,0,0,0.15)] rotate-[2deg] hover:rotate-0 hover:shadow-[2px_3px_0px_rgba(0,0,0,0.2)] transition-all duration-200"
+                  className="flex w-full bg-(--lavender) text-(--darktext) py-4 px-6 border-3 border-(--pink) shadow-[4px_6px_0px_rgba(0,0,0,0.15)] rotate-[2deg] rounded-md hover:rotate-0 hover:shadow-[2px_3px_0px_rgba(0,0,0,0.2)] transition-all duration-200"
                 >
                   Written reflection
                 </button>
                 {selectedPerformance?.prompts.length > 0 && <button
                   type="button"
                   onClick={() => setMode("prompts")}
-                  className="flex w-40 bg-(--green) text-(--darktext) border-3 border-(--pink) shadow-[4px_6px_0px_rgba(0,0,0,0.15)] rotate-[-2deg] hover:rotate-0 hover:shadow-[2px_3px_0px_rgba(0,0,0,0.2)] transition-all duration-200 py-6 px-4"
+                  className="flex w-40 bg-(--green) text-(--darktext) border-3 border-(--pink) shadow-[4px_6px_0px_rgba(0,0,0,0.15)] rotate-[-2deg] rounded-md hover:rotate-0 hover:shadow-[2px_3px_0px_rgba(0,0,0,0.2)] transition-all duration-200 py-6 px-4"
                 >
                   Answer prompts
                 </button>}
@@ -441,7 +441,7 @@ console.log("promptAnswers", promptAnswers)
                   ? "bg-(--green)"
                   : isSubmitting
                   ? "bg-(--peach)"
-                  : "bg-(--button)"
+                  : "bg-(--darkpink)"
               }
               disabled:opacity-25 disabled:cursor-not-allowed`}
           >

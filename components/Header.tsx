@@ -4,22 +4,15 @@ import React from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import {
-  SignedIn,
-  SignedOut,
-  SignInButton,
-  SignOutButton,
   useUser,
 } from "@clerk/nextjs";
 import {
-  FaCalendarAlt,
-  FaSignOutAlt,
-  FaSignInAlt,
+  FaRegCalendarAlt,
   FaPencilAlt,
   FaInfoCircle,
-  FaLayerGroup
+  FaLayerGroup, 
+  FaHome
 } from "react-icons/fa";
-import { GoHomeFill } from "react-icons/go";
-import { PiNotePencilBold } from "react-icons/pi";
 
 
 
@@ -64,7 +57,7 @@ const userName = user?.username
             isActive("/")  ? "text-(--icon-active)": "opacity-100"
           } hover:opacity-80`}
         >
-          <GoHomeFill size="1.5rem" />
+          <FaHome size="1.5rem" />
         </Link>
 
        
@@ -88,7 +81,7 @@ const userName = user?.username
                 isActive("/calendar")  ? "text-(--icon-active)": "opacity-100"
               } hover:opacity-80`}
             >
-              <FaCalendarAlt size="1.5rem"  />
+              <FaRegCalendarAlt size="1.5rem"  />
             </Link>
           )}
 
@@ -117,18 +110,6 @@ const userName = user?.username
             </Link>
           )}
        
-
-
-   
-        {!isSignedIn && (
-      
-          <SignInButton mode="modal" >
-            <button className="flex items-center font-bold border border-white px-4 py-2 rounded hover:bg-purple-700">
-              <FaSignInAlt className="mr-2" size="1.5rem" /> 
-              </button>
-          </SignInButton>
-        )}
-
 {isSignedIn && (
           <div className="flex items-end">
            <Link href="/about" className="flex items-center font-bold hover:bg-purple-700">

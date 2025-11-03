@@ -56,7 +56,7 @@ export const colourEmojis = {
   10: "❌"  
 } as const;
 
-const Post: React.FC<{ post: PostProps }> = ({ post }) => {
+const Post: React.FC<{ post: PostProps; colour: number }> = ({ post, colour }) => {
 
   const authorName = post.author?.firstName || "Unknown author";
   const createdAtDate = new Date(post.createdAt);
@@ -65,22 +65,25 @@ const Post: React.FC<{ post: PostProps }> = ({ post }) => {
   const formattedPerfDate = post.performanceDate
    ? format(new Date(post.performanceDate.dateTime), "EEE dd MMM yyyy")
    : null;
-
   return (
     <div className="">
-      <span className="w-full text-center text-(--teal) italic">Performance</span>
-              <h1 className="text-2xl font-bold uppercase">
-                {post.performance?.name}
-              </h1>
-     
-        {/* Performance Date */}
-        {formattedPerfDate && (
-        <span>
-        On {formattedPerfDate}
-        </span>
-      )}
-
-     
+     <div className="w-full flex justify-between items-end">
+        <div>
+          <span className="w-full text-center text-(--teal) italic">Performance</span>
+                  <h1 className="text-2xl font-bold uppercase">
+                    {post.performance?.name}
+                  </h1>
+         
+            {/* Performance Date */}
+            {formattedPerfDate && (
+            <span>
+            On {formattedPerfDate}
+            </span>
+          )}
+        </div>
+  
+       {colour ?  <div className="text-5xl transition-transform transform opacity-100 flex items-end w-fit justify-end">{colourEmojis[colour]}</div> : ""}
+     </div>
 
     
 

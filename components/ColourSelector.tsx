@@ -4,16 +4,16 @@ import { colourClasses, colourEmojis } from '../components/Post'; // ✅ reuse s
 
 type ColourSelectorProps = {
   postId: string;
-  initialColour: any;
+  colour: number;
+  onColourChange: (newColour: number) => void;
 };
 
-export const ColourSelector = ({ postId, initialColour }: ColourSelectorProps) => {
-  const [colour, setColour] = useState<number>(initialColour);
+export const ColourSelector = ({ postId, colour, onColourChange }: ColourSelectorProps) => {
   const [isUpdating, setIsUpdating] = useState(false);
 
   const handleClick = async (newColour: number) => {
-    if (isUpdating || newColour === colour) return; // prevent duplicate clicks
-    setColour(newColour);
+    if (isUpdating || newColour === colour) return;
+    onColourChange(newColour); // Update immediately for UI feedback
     setIsUpdating(true);
 
     try {
@@ -33,37 +33,28 @@ export const ColourSelector = ({ postId, initialColour }: ColourSelectorProps) =
   };
 
   return (
-    <div className="flex items-center gap-3">
-     
-      <div className="flex gap-2 items-center">
-        {/* {[1, 2, 3, 4, 5].map((num) => (
-          <button
-            key={num}
-            onClick={() => handleClick(num)}
-            disabled={isUpdating}
-            className={`w-8 h-8 rounded-full border-2 transition-transform transform hover:scale-110 ${
-              colour === num ? 'border-white' : 'border-transparent'
-            } ${colourClasses[num]} ${isUpdating ? 'opacity-50 cursor-wait' : ''}`}
-            title={`Colour ${num}`}
-          />
-        ))} */}
+    <div className="flex flex-col gap-2 items-start">
 
+      <div className="flex gap-2 items-center">
+  
 {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((num) => (
   <button
     key={num}
     type="button"
     onClick={() => handleClick(num)}
-    className={`text-2xl transition-transform transform hover:scale-125 ${
-      colour === num ? "opacity-100" : "opacity-60"
+    className={`text-xl transition-transform transform hover:scale-125 ${
+      colour === num ? "opacity-100 scale-125" : "opacity-60"
     }`}
     title={`Rating ${num}`}
   >
     {colourEmojis[num]}
   </button>
 ))}
-        
+         
+   
       </div>
       {isUpdating && <span className="text-gray-500 text-sm">Updating...</span>}
+
     </div>
   );
 };
