@@ -46,9 +46,14 @@ export const colourClasses = {
 export const colourEmojis = {
   1: "🥶",  
   2: "🌶️",  
-  3: "🦭", 
+  3: "🌱", 
   4: "🫨",  
-  5: "❌",  
+  5: "🐌",
+  6: "💡",
+  7: "🔥",
+  8: "🧀", 
+  9: "🚀", 
+  10: "❌"  
 } as const;
 
 const Post: React.FC<{ post: PostProps }> = ({ post }) => {

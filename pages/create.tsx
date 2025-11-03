@@ -3,7 +3,7 @@ import Layout from "../components/Layout";
 import Router from "next/router";
 import { Listbox, Transition } from "@headlessui/react";
 import { HiCheck, HiChevronDown } from "react-icons/hi";
-import { colourClasses, colourEmojis } from "../components/Post";
+import { colourEmojis } from "../components/Post";
 import { format } from "date-fns";
 
 type PerformanceOption = {
@@ -18,6 +18,8 @@ type Mode = "voice" | "reflection" | "prompts" | "";
 const Draft: React.FC = () => {
   const [content, setContent] = useState("");
   const [error, setError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
   const [dateError, setDateError] = useState("");
   const [promptAnswers, setPromptAnswers] = useState<Record<string, string>>({});
   const [selectedPerformanceId, setSelectedPerformanceId] = useState<string>("");
@@ -34,7 +36,7 @@ const Draft: React.FC = () => {
 
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const chunksRef = useRef<Blob[]>([]);
-
+console.log("promptAnswers", promptAnswers)
   useEffect(() => {
     const fetchPerformances = async () => {
       try {
@@ -97,17 +99,20 @@ const Draft: React.FC = () => {
 
   const submitData = async (e: React.SyntheticEvent) => {
     e.preventDefault();
+    setIsSubmitting(true);
     setError("");
+    setDateError("");
     // Require performance and date
-  if (!selectedPerformanceId) {
-    setError("Please select a performance before continuing.");
-    return;
-  }
-
-  if (!selectedDateId) {
-    setDateError("Please select a performance date before continuing.");
-    return;
-  }
+    if (!selectedPerformanceId) {
+      setError("Please select a performance before continuing.");
+      setIsSubmitting(false);
+      return;
+    }
+    if (!selectedDateId) {
+      setDateError("Please select a performance date before continuing.");
+      setIsSubmitting(false);
+      return;
+    }
     try {
       const formData = new FormData();
       formData.append("content", content);
@@ -120,11 +125,13 @@ const Draft: React.FC = () => {
       const response = await fetch("/api/post", { method: "POST", body: formData });
 
       if (!response.ok) throw new Error("Error saving form");
-
-      Router.push("/reflections");
+      setIsSubmitted(true);
+      setIsSubmitting(false);
+      setTimeout(() => Router.push("/reflections"), 1000);
     } catch (err) {
       console.error(err);
       setError("Error saving form");
+      setIsSubmitting(false);
     }
   };
 
@@ -132,10 +139,12 @@ const Draft: React.FC = () => {
 
   return (
     <Layout>
-      <h1 className="text-2xl font-bold mb-6">Record a Reflection</h1>
+      <h1 className="text-2xl font-bold mb-2 max-w-xl mx-auto">Record a Reflection</h1>
       <form onSubmit={submitData} className="max-w-xl mx-auto">
         {/* STEP 1: Choose Performance */}
         <div className="space-y-2 mb-2">
+        {colourRating ? 
+              <div className="text-5xl transition-transform transform opacity-100 flex items-end w-full justify-end">{colourEmojis[colourRating]}</div> : ""}
           <label className="block text-(--darktext) font-medium">Performance</label>
           {isLoading ? (
             <p className="text-gray-500 italic">Loading performances...</p>
@@ -162,7 +171,7 @@ const Draft: React.FC = () => {
               }}
             >
               <div className="relative">
-                <Listbox.Button className="relative w-full cursor-pointer bg-(--pink) text-white font-semibold py-2 pl-3 pr-10 text-left focus:border-(--green) focus:ring focus:ring-(--green) focus:outline-none sm:text-sm">
+                <Listbox.Button className={`relative w-full cursor-pointer ${selectedPerformanceId ? `bg-(--pink)` : `bg-(--orange)`} text-white font-semibold py-2 pl-3 pr-10 text-left focus:border-(--green) focus:ring focus:ring-(--green) focus:outline-none sm:text-sm`}>
                   <span className="block truncate">
                     {selectedPerformanceId
                       ? performances.find((p) => p.id === selectedPerformanceId)?.name
@@ -195,7 +204,7 @@ const Draft: React.FC = () => {
                               {p.name}
                             </span>
                             {selected && (
-                              <span className="absolute inset-y-0 right-0 flex items-center pr-4 text-indigo-600">
+                              <span className="absolute inset-y-0 right-0 flex items-center pr-4 text-(--greyblack)">
                                 <HiCheck className="h-5 w-5" />
                               </span>
                             )}
@@ -212,11 +221,11 @@ const Draft: React.FC = () => {
 
         {/* STEP 1.5: Choose Date */}
         {selectedPerformance && selectedPerformance.dates.length > 0 && (
-          <div className="space-y-2 mb-4">
+          <div className="space-y-2 mb-6">
             <label className="block text-(--darktext) font-medium">Date</label>
             <Listbox value={selectedDateId} onChange={(val) => setSelectedDateId(val)}>
               <div className="relative">
-                <Listbox.Button className="relative w-full cursor-pointer bg-(--pink) text-white font-semibold py-2 pl-3 pr-10 text-left focus:border-(--green) focus:ring focus:ring-(--green) focus:outline-none sm:text-sm">
+                <Listbox.Button className={`relative w-full cursor-pointer ${selectedDateId ? `bg-(--pink)` : `bg-(--orange)`} text-white font-semibold py-2 pl-3 pr-10 text-left focus:border-(--green) focus:ring focus:ring-(--green) focus:outline-none sm:text-sm`}>
                   <span className="block truncate">
                     {selectedDateId
                       ? format(
@@ -254,7 +263,7 @@ const Draft: React.FC = () => {
                               {format(new Date(d.dateTime), "do MMMM yyyy, h.mma")}
                             </span>
                             {selected && (
-                              <span className="absolute inset-y-0 right-0 flex items-center pr-4 text-black">
+                              <span className="absolute inset-y-0 right-0 flex items-center pr-4 text-(--greyblack)">
                                 <HiCheck className="h-5 w-5" />
                               </span>
                             )}
@@ -271,9 +280,9 @@ const Draft: React.FC = () => {
         )}
 
         {/* STEP 2: Choose Reflection Type */}
-        {selectedPerformanceId && !mode && (
+        {selectedDateId && !mode && (
           <div className="space-y-2 mb-4">
-            <h2 className="text-lg font-semibold text-(--darktext) mb-4">How would you like to reflect?</h2>
+            <h2 className="text-lg font-semibold text-(--orange) mb-4">How would you like to reflect?</h2>
             <div className="flex flex-row-reverse items-center sm:flex-row gap-4 justify-around">
               <button
                 type="button"
@@ -318,7 +327,7 @@ const Draft: React.FC = () => {
 
             {mode === "reflection" && (
               <div className="space-y-2">
-                 <h3 className="text-lg font-semibold text-gray-800">Written Reflection</h3>
+                 <h3 className="text-lg font-semibold text-(--orange)">Written Reflection</h3>
                 <textarea
                   value={content}
                   onChange={(e) => setContent(e.target.value)}
@@ -331,8 +340,23 @@ const Draft: React.FC = () => {
 
             {mode === "voice" && (
               <div className="space-y-2">
-                <h3 className="text-lg font-semibold text-(--darktext)">Voice Note</h3>
-                {!isRecording ? (
+                <h3 className="text-lg font-semibold text-(--orange)">Voice Note</h3>
+               
+                {audioUrl ? 
+              (
+                <div className="flex items-center gap-2">
+                  <audio controls src={audioUrl} className="flex-1" />
+                  <button
+                    type="button"
+                    onClick={clearRecording}
+                    className=" px-2 py-1 border rounded-md text-xs text-gray-700 hover:bg-gray-100"
+                  >
+                  Clear
+                  </button>
+                </div>
+              )
+                :
+              !isRecording ? (
                   <button
                     type="button"
                     onClick={startRecording}
@@ -349,24 +373,12 @@ const Draft: React.FC = () => {
                     ⏹ Stop Recording
                   </button>
                 )}
-                {audioUrl && (
-                  <div className="flex items-center gap-2">
-                    <audio controls src={audioUrl} className="flex-1" />
-                    <button
-                      type="button"
-                      onClick={clearRecording}
-                      className="rounded bg-gray-200 text-(--darktext) py-1 px-2 hover:bg-gray-300"
-                    >
-                      🗑️ Clear
-                    </button>
-                  </div>
-                )}
               </div>
             )}
 
             {mode === "prompts" && selectedPerformance?.prompts && (
               <div className="space-y-4">
-                <h3 className="text-lg font-semibold text-gray-800">Reflection Prompts</h3>
+                <h3 className="text-lg font-semibold text-(--orange)">Reflection Prompts</h3>
                 {selectedPerformance.prompts.map((p) => (
                   <div key={p.id} className="space-y-1">
                     <label className="block text-(--darktext)">{p.text}</label>
@@ -388,31 +400,24 @@ const Draft: React.FC = () => {
 
             {/* STEP 4: Colour Rating */}
             <div className="space-y-2 mb-4">
-              <label className="block text-gray-700 font-medium">Emoji Rating</label>
+              <label className="block text-(--orange) font-medium">Reaction</label>
+            
               <div className="flex items-center gap-3">
-                {/* {[1, 2, 3, 4, 5].map((num) => (
-                  <button
-                    key={num}
-                    type="button"
-                    onClick={() => setColourRating(num)}
-                    className={`w-8 h-8 rounded-full border-2 transition-transform transform hover:scale-110 ${
-                      colourRating === num ? "border-white" : "border-transparent"
-                    } ${colourClasses[num]}`}
-                    title={`Colour ${num}`}
-                  />
-                ))} */}
-                {[1, 2, 3, 4, 5].map((num) => (
-  <button
-    key={num}
-    type="button"
-    onClick={() => setColourRating(num)}
-    className={`text-2xl transition-transform transform hover:scale-125 ${
-      colourRating === num ? "opacity-100" : "opacity-60"
-    }`}
-    title={`Rating ${num}`}
-  >
-    {colourEmojis[num]}
-  </button>
+             
+{[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((num) => (
+  <>
+    <button
+      key={num}
+      type="button"
+      onClick={() => setColourRating(num)}
+      className={`text-2xl transition-transform transform hover:scale-125 ${
+        colourRating === num ? "opacity-100 scale-125" : "opacity-60"
+      }`}
+      title={`Rating ${num}`}
+    >
+      {colourEmojis[num]}
+    </button>
+  </>
 ))}
 
               </div>
@@ -420,15 +425,32 @@ const Draft: React.FC = () => {
 
             {error && <div className="text-red-600 font-medium mb-2">{error}</div>}
 
-            <input
-              type="submit"
-              disabled={mode === "reflection" && !content}
-              value="Create"
-              className="w-full rounded bg-(--button) text-white py-2 px-4 focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
-            />
+            <button
+            type="submit"
+            disabled={
+              isSubmitting ||
+              isSubmitted ||
+              (mode === "reflection" && !content.trim()) ||
+              (mode === "voice" && (!audioBlob || isRecording)) ||
+              (mode === "prompts" &&
+                Object.values(promptAnswers).filter((a) => a.trim() !== "").length === 0)
+            }
+            className={`w-full rounded py-2 px-4 font-semibold text-white transition-all duration-200
+              ${
+                isSubmitted
+                  ? "bg-(--green)"
+                  : isSubmitting
+                  ? "bg-(--peach)"
+                  : "bg-(--button)"
+              }
+              disabled:opacity-25 disabled:cursor-not-allowed`}
+          >
+            {isSubmitted ? "Created" : isSubmitting ? "Creating..." : "Create"}
+          </button>
           </div>
         )}
       </form>
+ 
     </Layout>
   );
 };

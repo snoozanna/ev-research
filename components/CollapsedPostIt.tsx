@@ -1,8 +1,10 @@
 import React from "react";
 import { format, formatDistance } from 'date-fns'
-import { PostProps, colourClasses, colourEmojis } from "./Post";
+import { PostProps, colourEmojis } from "./Post";
 import Link from "next/link";
 import Image from 'next/image'
+import { FaVoicemail, FaRegComments, FaAlignJustify } from "react-icons/fa";
+
 
 
 const CollapsedPostIt: React.FC<{ post: PostProps }> = ({ post }) => {
@@ -38,24 +40,30 @@ const rotate = rotations[Math.floor(Math.random() * rotations.length)];
       <div className="flex flex-col justify-between w-full">
      <div className="flex  gap-2 w-full">
       
-      <div className="flex flex-col gap-3 w-1/2 items-center justify-center">
+      <div className="flex flex-col gap-3 w-1/2 items-center justify-center text-(--greyblack)">
         {post.content && (
           <div
-            className="w-5 h-5 bg-(--lavender) rounded-sm"
+            className=""
             title="Reflection"
-          />
+          ><FaAlignJustify/></div>
         )}
         {post.voiceNoteUrl && (
           <div
-            className="w-5 h-5 bg-(--peach) rounded-full"
+            className=""
             title="Voice Note"
-          />
+          >
+            <FaVoicemail />
+
+          </div>
         )}
         {post.promptAnswers && post.promptAnswers.length > 0 && (
           <div
-            className="w-8 h-4 bg-(--green) rounded-md"
+            className=""
             title="Prompt Answers"
-          />
+          >
+            <FaRegComments />
+
+          </div>
         )}
       </div>
       <div className="flex items-center justify-center w-1/2 ">

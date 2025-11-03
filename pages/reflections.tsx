@@ -2,7 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { GetServerSideProps } from 'next';
 import { getAuth } from '@clerk/nextjs/server';
 import Layout from '../components/Layout';
-import { PostProps, colourClasses, colourEmojis } from '../components/Post';
+import { PostProps, colourEmojis } from '../components/Post';
 import prisma from '../lib/prisma';
 import CollapsedPostIt from '../components/CollapsedPostIt';
 
@@ -128,7 +128,7 @@ const Reflections: React.FC<Props> = ({ myPosts, isAuthenticated }) => {
         <h1 className="text-2xl font-bold mb-6">My Reflections</h1>
 
         {/* FILTER BAR */}
-        <div className="flex flex-wrap gap-4 mb-6 items-center">
+        <div className="flex flex-wrap gap-4 mb-6 items-center text-sm">
           {/* Performance filter */}
           <select
             value={selectedPerformance}
@@ -154,42 +154,29 @@ const Reflections: React.FC<Props> = ({ myPosts, isAuthenticated }) => {
             <option value="not_shared">Not shared</option>
           </select>
         {/* Colour filter */}
-        <div className="flex items-center gap-3">
-  {/* {[1, 2, 3, 4, 5].map((num) => (
-    <button
-      key={num}
-      onClick={() => setColourFilter(num)}
-      className={`w-8 h-8 rounded-full border-2 transition-transform transform hover:scale-110 ${
-        colourFilter === num
-          ? "border-white"
-          : "border-transparent"
-      } ${colourClasses[num]}`}
-      title={`Colour ${num}`}
-    />
-  ))} */}
-{[1, 2, 3, 4, 5].map((num) => (
+        <div className="flex items-center gap-3 flex-wrap">
+{[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((num) => (
   <button
     key={num}
     type="button"
     onClick={() => setColourFilter(num)}
     className={`text-2xl transition-transform transform hover:scale-125 ${
-      colourFilter === num ? "opacity-100" : "opacity-60"
+      colourFilter === num ? "opacity-100 scale-150" : "opacity-60"
     }`}
     title={`Rating ${num}`}
   >
     {colourEmojis[num]}
   </button>
 ))}
-  
 
+</div>
   {/* Clear filter button */}
   <button
     onClick={() => setColourFilter('all')}
-    className="ml-2 px-3 py-1 border rounded-md text-sm text-gray-700 hover:bg-gray-100"
+    className=" px-2 py-1 border rounded-md text-xs text-gray-700 hover:bg-gray-100"
   >
     Clear
   </button>
-</div>
         </div>
 
 

@@ -15,7 +15,8 @@ import {
   FaSignOutAlt,
   FaSignInAlt,
   FaPencilAlt,
-  FaQuoteLeft
+  FaInfoCircle,
+  FaLayerGroup
 } from "react-icons/fa";
 import { GoHomeFill } from "react-icons/go";
 import { PiNotePencilBold } from "react-icons/pi";
@@ -42,14 +43,14 @@ const userName = user?.username
 
   if (!isLoaded) {
     return (
-      <nav className="flex flex-col items-center justify-between p-4  sticky top-0 bg-(--bg) gap-2">
+      <nav className="flex flex-col items-center justify-between p-4  sticky top-0 bg-(--bg) gap-2 z-2">
         <p>Loading user...</p>
       </nav>
     );
   }
 
   return (
-    <nav className="flex flex-col items-center justify-between p-4  sticky top-0 bg-(--bg) gap-2">
+    <nav className="flex flex-col items-center justify-between p-4  sticky top-0 bg-(--bg) gap-2 z-2">
       <div className="flex flex-col">
       {isSignedIn && (
         <span className="w-full text-center text-(--teal) italic">{userName}'s</span>)}
@@ -75,7 +76,7 @@ const userName = user?.username
                 isActive("/reflections") ? "text-(--icon-active)" : "opacity-100"
               } hover:opacity-80`}
             >
-              <FaQuoteLeft size="1.5rem" />
+              <FaLayerGroup size="1.5rem" />
             </Link>
           )}
 
@@ -130,12 +131,10 @@ const userName = user?.username
 
 {isSignedIn && (
           <div className="flex items-end">
-            {/* <p className="text-sm">{user?.fullName || user?.primaryEmailAddress?.emailAddress}</p> */}
-            <SignOutButton>
-              <button className="flex items-center font-bold hover:bg-purple-700">
-                <FaSignOutAlt className="mr-2" size="1.5rem"/> 
-              </button>
-            </SignOutButton>
+           <Link href="/about" className="flex items-center font-bold hover:bg-purple-700">
+             <FaInfoCircle size="1.5rem" />
+         </Link>
+           
           </div>
 )}
       </div>
