@@ -32,6 +32,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res, params 
           lte: endOfDay(day),
         },
       },
+      author: { clerkId: userId }
     },
     include: {
       author: { select: { firstName: true, email: true } },
