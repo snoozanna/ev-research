@@ -46,13 +46,13 @@ console.log("post", post)
       <div className="flex flex-col gap-3 w-1/2 items-center justify-center text-(--greyblack) text-lg">
       {post.content && (
                 <div
-                  className=""
+                  className="rounded-full bg-(--pink) p-2"
                   title="Reflection"
                 ><FaAlignJustify/></div>
               )}
               {post.voiceNoteUrl && (
                 <div
-                  className=""
+                  className="rounded-full bg-(--pink) p-2"
                   title="Voice Note"
                 >
                   <FaVoicemail />
@@ -61,7 +61,7 @@ console.log("post", post)
               )}
               {post.promptAnswers && post.promptAnswers.length > 0 && (
                 <div
-                  className=""
+                  className="rounded-full bg-(--pink) p-2"
                   title="Prompt Answers"
                 >
                   <FaRegComments />
@@ -78,6 +78,7 @@ console.log("post", post)
       </div>
   </div>
   <div className="text-xs flex text-right flex-col"><span>Created</span> <span>{daysAgo}</span></div>
+  
  </div>
   </div>
 

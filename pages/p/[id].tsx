@@ -24,7 +24,10 @@ export const getServerSideProps: GetServerSideProps = async ({ req, params }) =>
   }
 
   const post = await prisma.post.findUnique({
-    where: { id: String(params?.id) },
+    where: { 
+      id: String(params?.id), 
+      author: { clerkId: userId }
+     },
     include: {
       author: { select: { firstName: true, email: true } },
       performance: { select: { id: true, name: true, imageUrl: true } },

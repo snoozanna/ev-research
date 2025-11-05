@@ -50,7 +50,7 @@ const rotate = rotations[Math.floor(Math.random() * rotations.length)];
           </h2>
         )}
        
-       <div className="w-full">{formattedPerfDate && <p className="text-xs text-(--orange)">{formattedPerfDate}</p>}
+       <div className="w-full mb-2">{formattedPerfDate && <p className="text-xs text-(--orange)">{formattedPerfDate}</p>}
      </div>
      <div className="flex gap-2 justify-between w-full items-center">
     {/* Type Indicators */}
@@ -58,13 +58,13 @@ const rotate = rotations[Math.floor(Math.random() * rotations.length)];
       <div className="flex gap-3 items-start justify-center text-(--greyblack) text-2xl">
         {post.content && (
           <div
-            className=""
+            className="rounded-full bg-(--pink) p-2"
             title="Reflection"
-          ><FaAlignJustify/></div>
+          ><FaAlignJustify className=""/></div>
         )}
         {post.voiceNoteUrl && (
           <div
-            className=""
+            className="rounded-full bg-(--pink) p-2"
             title="Voice Note"
           >
             <FaVoicemail />
@@ -73,7 +73,7 @@ const rotate = rotations[Math.floor(Math.random() * rotations.length)];
         )}
         {post.promptAnswers && post.promptAnswers.length > 0 && (
           <div
-            className=""
+            className="rounded-full bg-(--pink) p-2"
             title="Prompt Answers"
           >
             <FaRegComments />
