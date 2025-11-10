@@ -1,17 +1,16 @@
-import React, {useState} from "react";
+import React, { useState } from "react";
 import { GetServerSideProps } from "next";
 import { getAuth } from "@clerk/nextjs/server";
 import Layout from "../../components/Layout";
 import Post, { PostProps } from "../../components/Post";
 import prisma from "../../lib/prisma";
-import { ShareToggle } from "../../components/ShareToggle";
-import { ColourSelector } from "../../components/ColourSelector";
-import { FaRegTrashAlt } from "react-icons/fa";
 import { useRouter } from "next/router";
-import Link from "next/link";
+import ModifyPost from "../../components/ModifyPost";
+import AnnoymousPost from "../../components/AnnoymousPost";
+import { Role } from "@prisma/client";
+import Header from "../../components/Header";
 
 export const getServerSideProps: GetServerSideProps = async ({ req, params }) => {
-
   const { userId } = getAuth(req);
 
   if (!userId) {
@@ -23,14 +22,51 @@ export const getServerSideProps: GetServerSideProps = async ({ req, params }) =>
     };
   }
 
-  const post = await prisma.post.findUnique({
-    where: { 
-      id: String(params?.id), 
-      author: { clerkId: userId }
-     },
+  // 1️⃣ Get the logged-in user (with role + db id)
+  const currentUser = await prisma.user.findUnique({
+    where: { clerkId: userId },
+    select: { id: true, clerkId: true, role: true, email: true },
+  });
+
+  if (!currentUser) {
+    return { notFound: true };
+  }
+
+  const postId = String(params?.id);
+
+  // 2️⃣ Build visibility logic
+  const post = await prisma.post.findFirst({
+    where: {
+      id: postId,
+      OR: [
+        // a. You created the post
+        { author: { clerkId: userId } },
+
+        // b. Artist – post is shared and it's your show
+        {
+          AND: [
+            { shareWithArtist: true },
+            { performance: { artistId: currentUser.id } },
+          ],
+        },
+
+        // c. Admin – shared reflections
+        currentUser.role === "ADMIN"
+          ? { shareWithArtist: true }
+          : undefined,
+      ].filter(Boolean), // remove undefined if not admin
+    },
     include: {
-      author: { select: { firstName: true, email: true } },
-      performance: { select: { id: true, name: true, imageUrl: true, location: true } },
+      author: { select: { firstName: true, email: true, clerkId: true } },
+      performance: {
+        select: {
+          id: true,
+          name: true,
+          imageUrl: true,
+          location: true,
+          artistId: true,
+        },
+      },
       performanceDate: { select: { id: true, dateTime: true } },
       promptAnswers: {
         include: { prompt: { select: { id: true, text: true } } },
@@ -38,77 +74,73 @@ export const getServerSideProps: GetServerSideProps = async ({ req, params }) =>
     },
   });
 
- // Convert Date object to ISO strings
- const serializedPost = {
-  ...post,
-  createdAt: post.createdAt?.toISOString?.() ?? null,
-  performanceDate: post.performanceDate
-    ? {
-        ...post.performanceDate,
-        dateTime: post.performanceDate.dateTime
-          ? post.performanceDate.dateTime.toISOString()
-          : null,
-      }
-    : null,
+  if (!post) {
+    return { notFound: true };
+  }
+
+  const serializedPost = {
+    ...post,
+    createdAt: post.createdAt?.toISOString?.() ?? null,
+    performanceDate: post.performanceDate
+      ? {
+          ...post.performanceDate,
+          dateTime: post.performanceDate.dateTime
+            ? post.performanceDate.dateTime.toISOString()
+            : null,
+        }
+      : null,
+  };
+
+  return {
+    props: {
+      post: serializedPost,
+      currentUserId: currentUser.clerkId,
+      role: currentUser.role,
+      userPr: currentUser
+    },
+  };
 };
-  
-return {
-  props: { post: serializedPost },
-};
+
+type UserPr = {
+  id: string;
+  role: Role;
 };
 
 type Props = {
   post: PostProps;
+  userPr: UserPr;
 };
 
-const ReflectionPage: React.FC<Props> = ({ post }) => {
+const ReflectionPage: React.FC<Props> = ({ post, userPr }) => {
   const router = useRouter();
   const [colour, setColour] = useState<number>(Number(post.colourRating) || 3);
+  const role = userPr?.role;
 
-  const deletePost = async (id: string) => {
-    const confirmed = window.confirm("Are you sure you want to delete this reflection?");
-    if (!confirmed) return;
 
-    const res = await fetch(`/api/post/${id}`, { method: "DELETE" });
-    if (res.ok) {
-      router.push("/reflections");
-    } else {
-      alert("Failed to delete reflection.");
-    }
-  };
-
+  const isUserAlsoAuthor = userPr.id === post.author?.clerkId;
   return (
     <Layout>
-
-      
+      <Header userRole={role}/>
       <div className="max-w-3xl mx-auto p-6 space-y-6 bg-(--peach)">
-      
-
         {/* Reflection content */}
-        <Post post={post} colour={colour} />
 
-
-        {/* Toggles section */}
-        <div className="flex flex-wrap items-center justify-between gap-6 pt-4 border-t">
-          <div className="flex flex-wrap items-center gap-4">
-           
-            <ColourSelector postId={post.id} colour={colour} onColourChange={setColour}/>
-          </div>
-
-          <div className="w-full flex justify-between">
-          <ShareToggle postId={post.id} initialState={post.shareWithArtist ?? false} />
-            <button
-              onClick={() => deletePost(post.id)}
-              className="flex items-center gap-2 px-4 py-2 rounded bg-(--deletered) text-white focus:outline-none focus:ring focus:ring-red-200"
-            >
-              <FaRegTrashAlt />
-         
-            </button>
-          </div>
-        </div>
+        {isUserAlsoAuthor ? 
+       ( <>
+       <Post post={post} colour={colour} />
+        <ModifyPost post={post} colour={colour} setColour={setColour}/>
+        </>)
+        : 
+        <AnnoymousPost post={post} colour={colour} />}
+      
       </div>
-    
-          <button type="button" className='`p-2  mb-2  flex flex-row gap-1' onClick={() => router.back()}></button>
+
+      <button
+        type="button"
+        className="p-2 mb-2 flex flex-row gap-1"
+        onClick={() => router.back()}
+      >
+        Back
+      </button>
     </Layout>
   );
 };

@@ -5,6 +5,9 @@ import { PostProps } from '../components/Post';
 import prisma from '../lib/prisma';
 import Calendar from "../components/Calendar";
 import { getAuth } from '@clerk/nextjs/server';
+import { useUser } from "@clerk/nextjs";
+import Header from '../components/Header';
+import { Role } from "@prisma/client";
 
 export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
    const { userId } = getAuth(req);
@@ -19,7 +22,18 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
     };
   }
 
-  const myPosts = await prisma.post.findMany({
+  // Get user role
+const userPr = await prisma.user.findUnique({
+  where: { clerkId: userId },
+  select: { id: true, role: true },
+});
+
+if (!userPr) {
+  return { redirect: { destination: '/sign-in', permanent: false } };
+}
+
+
+const myPosts = await prisma.post.findMany({
     where: { author: { clerkId: userId } },
     include: {
       author: { select: { firstName: true, email: true } },
@@ -46,17 +60,26 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
       : null,
   }));
 
-  return { props: { myPosts: serializedPosts,  isAuthenticated: true  } };
+  return { props: { myPosts: serializedPosts,  isAuthenticated: true, userPr:userPr  } };
+};
+
+type UserPr = {
+  id: string;
+  role: Role;
 };
 
 type Props = {
   myPosts: PostProps[];
   isAuthenticated: boolean;
+  userPr: UserPr;
 };
 
 
-const CalendarPage: React.FC<Props> = ({ myPosts, isAuthenticated }) => {
+const CalendarPage: React.FC<Props> = ({ myPosts, isAuthenticated, userPr }) => {
+
   const [mode, setMode] = useState<"performance" | "reflection">("performance");
+  const role = userPr?.role;
+const { isSignedIn } = useUser();
 
 const toggle = () => {
   if (mode === "performance"){
@@ -67,18 +90,29 @@ const toggle = () => {
   }  
 }
 
-if (!isAuthenticated) {
+if (!isSignedIn) {
   return (
     <Layout>
+      <Header userRole={role} />
       <h1 className="text-2xl font-bold mb-4">My Calendar</h1>
       <div className="text-gray-700">You need to be authenticated to view this page.</div>
     </Layout>
   );
 }
 
+ if (role === "ARTIST") {
+      return (
+        <Layout>
+          <Header userRole={role} />
+          <div className="text-gray-700">You don't have permission to view this page</div>
+        </Layout>
+      );
+    }
+
 
   return (
     <Layout>
+      <Header userRole={role} />
       <div className="page">
         <h1 className='text-2xl font-bold mb-6'>My Calendar</h1>
         <main>

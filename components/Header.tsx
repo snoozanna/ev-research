@@ -11,28 +11,32 @@ import {
   FaPencilAlt,
   FaInfoCircle,
   FaLayerGroup, 
-  FaHome
+  FaHome,
+  FaAnchor
 } from "react-icons/fa";
 
+type HeaderProps = {
+  userRole?: "ADMIN" | "ARTIST" | "ATTENDEE";
+};
 
-
-const Header: React.FC = () => {
+const Header: React.FC<HeaderProps> = ({ userRole }) => {
   const router = useRouter();
   const { user, isSignedIn, isLoaded } = useUser();
-console.log("user", user)
   const isActive = (pathname: string) => router.pathname === pathname;
 const userName = user?.username
+console.log("userRole", userRole)
+console.log("user", user)
 // TODO 
   // const role = GET ROLE 
 
-  // // Define role visibility
-  // const canSee = {
-  //   home: true,
-  //   reflections: ["ADMIN", "ATTENDEE", "ARTIST"].includes(role || ""),
-  //   calendar: ["ADMIN", "ATTENDEE"].includes(role || ""),
-  //   create: ["ADMIN", "ATTENDEE"].includes(role || ""),
-  //   admin: role === "ADMIN",
-  // };
+  // Define role visibility
+  const canSee = {
+    home: true,
+    reflections: ["ADMIN", "ATTENDEE", "ARTIST"].includes(userRole || ""),
+    calendar: ["ADMIN", "ATTENDEE"].includes(userRole || ""),
+    create: ["ADMIN", "ATTENDEE"].includes(userRole || ""),
+    admin: userRole === "ADMIN",
+  };
 
   if (!isLoaded) {
     return (
@@ -61,8 +65,8 @@ const userName = user?.username
         </Link>
 
        
-          {/* {isSignedIn && canSee.reflections && ( */}
-            {isSignedIn && (
+          {isSignedIn && canSee.reflections && (
+            // {isSignedIn && (
             <Link
               href="/reflections"
               className={`flex items-center font-bold ${
@@ -73,8 +77,8 @@ const userName = user?.username
             </Link>
           )}
 
-          {/* {isSignedIn && canSee.calendar && ( */}
-             {isSignedIn && (
+          {isSignedIn && canSee.calendar && (
+            //  {isSignedIn && (
             <Link
               href="/calendar"
               className={`flex items-center font-bold ${
@@ -85,24 +89,22 @@ const userName = user?.username
             </Link>
           )}
 
-          {/* {isSignedIn &&  canSee.admin && ( */}
-          {/* {isSignedIn && (
+          {isSignedIn &&  canSee.admin && (
+          // {isSignedIn && (
             <Link
               href="/admin"
               className={`flex items-center font-bold ${
                 isActive("/admin")  ? "text-(--icon-active)": "opacity-100"
               } hover:opacity-80`}
             >
-              <FaAnchor className="mr-2" />
+              <FaAnchor size="1.5rem" />
             </Link>
-          )} */}
+          )}
        
   
 
 
-      {isSignedIn && (
-
-          // {canSee.create && (
+       {isSignedIn &&  canSee.create && (
             <Link href="/create" className="flex items-center font-bold hover:bg-purple-700">
              
                 <FaPencilAlt size="1.5rem" />

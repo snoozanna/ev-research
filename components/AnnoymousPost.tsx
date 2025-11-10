@@ -58,7 +58,7 @@ export const colourEmojis = {
   10: "❌"  
 } as const;
 
-const Post: React.FC<{ post: PostProps; colour: number }> = ({ post, colour }) => {
+const AnnoymousPost: React.FC<{ post: PostProps; colour: number }> = ({ post, colour }) => {
 
   const authorName = post.author?.firstName || "Unknown author";
   const createdAtDate = new Date(post.createdAt);
@@ -144,11 +144,11 @@ const Post: React.FC<{ post: PostProps; colour: number }> = ({ post, colour }) =
       )}
        {/* Created At */}
        <div className="w-full flex flex-col justify-end items-end"><p className="text-sm">{formattedDate}</p>
-       {authorName &&( <span className="text-sm">By {authorName}</span>)}
+       
        </div>
      
     </div>
   );
 };
 
-export default Post;
+export default AnnoymousPost;

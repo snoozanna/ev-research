@@ -5,11 +5,11 @@ import { PostProps } from '../../components/Post';
 import prisma from '../../lib/prisma';
 import CollapsedPost from '../../components/CollapsedPost';
 import { getAuth } from '@clerk/nextjs/server';
-import Link from 'next/link';
 import { useRouter } from 'next/router'
+import { Role } from "@prisma/client";
+import Header from '../../components/Header';
 
 
-type Props = { posts: PostProps[]; date: string };
 
 export const getServerSideProps: GetServerSideProps = async ({ req, res, params }) => {
   const { userId } = getAuth(req);
@@ -23,6 +23,17 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res, params 
         },
       };
     }
+  
+  // Get user role
+const userPr = await prisma.user.findUnique({
+  where: { clerkId: userId },
+  select: { id: true, role: true },
+});
+
+if (!userPr) {
+  return { redirect: { destination: '/sign-in', permanent: false } };
+}
+
   const dateStr = params?.date as string;
   const day = parseISO(dateStr);
 
@@ -59,12 +70,23 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res, params 
       : null,
   }));
 
-  return { props: { posts: serializedPosts, date: dateStr } };
+  return { props: { posts: serializedPosts, date: dateStr,    userPr: userPr } };
 };
 
-const DayPage: React.FC<Props> = ({ posts, date }) => {
-  const router = useRouter()
+type UserPr = {
+  id: string;
+  role: Role;
+};
 
+type Props = {
+  userPr: UserPr;
+  posts: PostProps[]; 
+  date: string 
+};
+
+const DayPage: React.FC<Props> = ({ posts, date, userPr }) => {
+  const router = useRouter()
+  const role = userPr?.role;
    const formattedPerfDate = date
     ? format(new Date(date), "EEE dd MMM yyyy")
     : null;
@@ -78,6 +100,7 @@ const DayPage: React.FC<Props> = ({ posts, date }) => {
 
   return (
     <Layout>
+      <Header userRole={role}/>
       <h1 className="text-2xl font-bold mb-6">Reflections I made on {formattedPerfDate}</h1>
       {Object.entries(grouped).map(([performance, posts]) => (
         <div key={performance} className="flex flex-col gap-3 mb-4">

@@ -1,172 +1,121 @@
-import React, { useState, useMemo } from 'react';
-import { GetServerSideProps } from 'next';
-import { getAuth } from '@clerk/nextjs/server';
-import Layout from '../components/Layout';
-import { PostProps } from '../components/Post';
-import prisma from '../lib/prisma';
-import CollapsedPostIt from '../components/CollapsedPostIt';
-import FilterBar from '../components/FilterBar';
+// pages/reflections.tsx
+import React from "react";
+import { GetServerSideProps } from "next";
+import { getAuth } from "@clerk/nextjs/server";
+import Layout from "../components/Layout";
+import prisma from "../lib/prisma";
+import MyReflections from "../components/MyReflections";
+import ReflectionsOnMyWork from "../components/ReflectionsOnMyWork";
+import { PostProps } from "../components/Post";
+import Header from "../components/Header";
 
-
-
-export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
+export const getServerSideProps: GetServerSideProps = async ({ req }) => {
   const { userId } = getAuth(req);
 
   if (!userId) {
     return {
       redirect: {
-        destination: '/sign-in',
+        destination: "/sign-in",
         permanent: false,
       },
     };
   }
 
+  const user = await prisma.user.findUnique({
+    where: { clerkId: userId },
+    select: { id: true, role: true },
+  });
+
+  if (!user) {
+    return { redirect: { destination: "/sign-in", permanent: false } };
+  }
+
+  const role = user.role;
+
+  // 1️⃣ My own reflections
   const myPosts = await prisma.post.findMany({
     where: { author: { clerkId: userId } },
     include: {
       author: { select: { firstName: true, email: true } },
       performance: { select: { id: true, name: true, imageUrl: true } },
       performanceDate: { select: { id: true, dateTime: true } },
-      promptAnswers: { include: { prompt: { select: { id: true, text: true } } } },
+      promptAnswers: { include: { prompt: true } },
     },
+    orderBy: { createdAt: "desc" },
   });
 
-  // Convert Date objects to ISO strings
-  const serializedPosts = myPosts.map((post) => ({
-    ...post,
-    createdAt: post.createdAt?.toISOString?.() ?? null,
-    performanceDate: post.performanceDate
-      ? {
-          ...post.performanceDate,
-          dateTime: post.performanceDate.dateTime
-            ? post.performanceDate.dateTime.toISOString()
-            : null,
-        }
-      : null,
-  }));
-  
+  // 2️⃣ Reflections on my work / shared reflections
+  let reflectionsOnMyWork: any[] = [];
 
-  return { 
-    props: { 
-      myPosts: serializedPosts,
-      isAuthenticated: true 
-    } 
+  if (role === "ADMIN") {
+    reflectionsOnMyWork = await prisma.post.findMany({
+      where: { shareWithArtist: true },
+      include: {
+        author: { select: { firstName: true, email: true } },
+        performance: { select: { id: true, name: true, imageUrl: true } },
+        performanceDate: { select: { id: true, dateTime: true } },
+        promptAnswers: { include: { prompt: true } },
+      },
+      orderBy: { createdAt: "desc" },
+    });
+  } else if (role === "ARTIST") {
+    reflectionsOnMyWork = await prisma.post.findMany({
+      where: {
+        shareWithArtist: true,
+        performance: { artistId: user.id },
+      },
+      include: {
+        author: { select: { firstName: true, email: true } },
+        performance: { select: { id: true, name: true, imageUrl: true } },
+        performanceDate: { select: { id: true, dateTime: true } },
+        promptAnswers: { include: { prompt: true } },
+      },
+      orderBy: { createdAt: "desc" },
+    });
+  }
+
+  // 3️⃣ Serialize dates for hydration
+  const serializePosts = (posts: any[]) =>
+    posts.map((post) => ({
+      ...post,
+      createdAt: post.createdAt?.toISOString?.() ?? null,
+      performanceDate: post.performanceDate
+        ? {
+            ...post.performanceDate,
+            dateTime: post.performanceDate.dateTime
+              ? post.performanceDate.dateTime.toISOString()
+              : null,
+          }
+        : null,
+    }));
+
+  return {
+    props: {
+      myPosts: serializePosts(myPosts),
+      reflectionsOnMyWork: serializePosts(reflectionsOnMyWork),
+      role,
+    },
   };
 };
 
-type Props = { myPosts: PostProps[];
-  isAuthenticated: boolean;
- };
+type Props = {
+  myPosts: PostProps[];
+  reflectionsOnMyWork: PostProps[];
+  role: "ADMIN" | "ARTIST" | "ATTENDEE";
+};
 
-const Reflections: React.FC<Props> = ({ myPosts, isAuthenticated }) => {
-
-  const [draftPosts, setDraftPosts] = useState(myPosts);
-  const [showFilters, setShowFilters] = useState(false);
-
-  // Filter states
-  const [selectedPerformance, setSelectedPerformance] = useState<string>('all');
-  const [sharedFilter, setSharedFilter] = useState<'all' | 'shared' | 'not_shared'>('all');
-  const [colourFilter, setColourFilter] = useState<number | 'all'>('all');
-  const [reflectionType, setReflectionType] = useState<'all' | 'text' | 'voice' | 'prompt'>('all');
-
-
-  // Get unique performances for dropdown
-  const performances = useMemo(() => {
-    const unique = new Map<string, string>();
-    myPosts.forEach((d) => {
-      if (d.performance?.id && d.performance?.name) {
-        unique.set(d.performance.id, d.performance.name);
-      }
-    });
-    return Array.from(unique.entries()).map(([id, name]) => ({ id, name }));
-  }, [myPosts]);
-
-  // Filtered posts
-  const filteredPosts = useMemo(() => {
-    return draftPosts.filter((post) => {
-      const matchesPerformance =
-        selectedPerformance === 'all' || post.performance?.id === selectedPerformance;
-  
-      const matchesShared =
-        sharedFilter === 'all' ||
-        (sharedFilter === 'shared' && post.shareWithArtist) ||
-        (sharedFilter === 'not_shared' && !post.shareWithArtist);
-  
-      const matchesColour =
-        colourFilter === 'all' || post.colourRating.toString() === colourFilter.toString();
-  
-      const matchesReflectionType =
-        reflectionType === 'all' ||
-        (reflectionType === 'text' && !!post.content) ||
-        (reflectionType === 'voice' && !!post.voiceNoteUrl) ||
-        (reflectionType === 'prompt' && post.promptAnswers?.length > 0);
-  
-      return matchesPerformance && matchesShared && matchesColour && matchesReflectionType;
-    });
-  }, [draftPosts, selectedPerformance, sharedFilter, colourFilter, reflectionType]);
-
-  const deletePost = async (id: string) => {
-    const confirmed = window.confirm("Are you sure you want to delete this post?");
-    if (!confirmed) return;
-    const res = await fetch(`/api/post/${id}`, { method: 'DELETE' });
-    if (res.ok) {
-      setDraftPosts((prev) => prev.filter((p) => p.id !== id));
-    } else {
-      alert("Failed to delete post");
-    }
-  };
-
-
-  if (!isAuthenticated) {
-    return (
-      <Layout>
-        <h1 className="text-2xl font-bold mb-4">My Reflections</h1>
-        <div className="text-gray-700">You need to be authenticated to view this page.</div>
-      </Layout>
-    );
-  }
-
-
-  
-
+const Reflections: React.FC<Props> = ({ myPosts, reflectionsOnMyWork, role }) => {
   return (
     <Layout>
-      <div className="max-w-3xl mx-auto">
-        <h1 className="text-2xl font-bold mb-6">My Reflections</h1>
+      <Header userRole={role}/>
+      <div className="max-w-4xl mx-auto space-y-12">
+        {/* Always show My Reflections */}
+        <MyReflections posts={myPosts} />
 
-      {/* FILTER TOGGLE BUTTON */}
-<div className="flex justify-end mb-4">
-  <button
-    onClick={() => setShowFilters((prev) => !prev)}
-    className="px-3 py-1 text-sm border rounded-md text-gray-700 hover:bg-gray-100"
-  >
-    {showFilters ? 'Hide Filters' : 'Show Filters'}
-  </button>
-</div>
-
-{/* CONDITIONAL FILTER BAR */}
-{showFilters && (
-  <FilterBar
-    selectedPerformance={selectedPerformance}
-    setSelectedPerformance={setSelectedPerformance}
-    performances={performances}
-    sharedFilter={sharedFilter}
-    setSharedFilter={setSharedFilter}
-    setColourFilter={setColourFilter}
-    colourFilter={colourFilter}
-    reflectionType={reflectionType}
-    setReflectionType={setReflectionType}
-  />
-)}
-        {/* POSTS */}
-        <main className="space-y-6">
-        <div className="grid grid-cols-2 grid-flow-row sm:grid-cols-2 gap-6">
-            {filteredPosts.map((post) => (
-                 <CollapsedPostIt key={post.id} post={post} />
-          ))}
-            {filteredPosts.length === 0 && <p className="text-(--greyblack)">No reflections found.</p>}
-          </div>
-        </main>
+        {/* Show “Reflections on My Work” for artists/admins */}
+        {(role === "ADMIN" || role === "ARTIST") && (
+          <ReflectionsOnMyWork posts={reflectionsOnMyWork} role={role} />
+        )}
       </div>
     </Layout>
   );

@@ -5,6 +5,45 @@ import { Listbox, Transition } from "@headlessui/react";
 import { HiCheck, HiChevronDown } from "react-icons/hi";
 import { colourEmojis } from "../components/Post";
 import { format } from "date-fns";
+import { getAuth } from '@clerk/nextjs/server';
+import { GetServerSideProps } from "next";
+import prisma from '../lib/prisma';
+import { useUser } from "@clerk/nextjs";
+import Header from "../components/Header";
+import { Role } from "@prisma/client";
+
+export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
+  const { userId } = getAuth(req);
+
+  if (!userId) {
+  
+    return {
+      redirect: {
+        destination: '/sign-in',
+        permanent: false,
+      },
+    };
+  }
+
+// Get user role
+const userPr = await prisma.user.findUnique({
+  where: { clerkId: userId },
+  select: { id: true, role: true },
+});
+
+if (!userPr) {
+  return { redirect: { destination: '/sign-in', permanent: false } };
+}
+
+
+
+return {
+  props: {
+    isAuthenticated: true,
+    userPr: userPr
+  },
+};
+};
 
 type PerformanceOption = {
   id: string;
@@ -15,7 +54,20 @@ type PerformanceOption = {
 
 type Mode = "voice" | "reflection" | "prompts" | "";
 
-const Draft: React.FC = () => {
+type UserPr = {
+  id: string;
+  role: Role;
+};
+
+type Props = {
+  isAuthenticated: boolean;
+  userPr: UserPr;
+};
+
+const Draft: React.FC<Props> = ({userPr}) => {
+  const { isSignedIn } = useUser();
+  const role = userPr?.role;
+
   const [content, setContent] = useState("");
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -134,11 +186,31 @@ console.log("promptAnswers", promptAnswers)
       setIsSubmitting(false);
     }
   };
-  console.log("oerformances", performances)
+
   const selectedPerformance = performances.find((p) => p.id === selectedPerformanceId);
+
+   if (!isSignedIn) {
+      return (
+        <Layout>
+          <Header userRole={role} />
+          <div className="text-gray-700">You need to sign in to view this page.</div>
+        </Layout>
+      );
+    }
+
+    if (role === "ARTIST") {
+      return (
+        <Layout>
+          <Header userRole={role} />
+          <div className="text-gray-700">You don't have permission to view this page</div>
+        </Layout>
+      );
+    }
+
 
   return (
     <Layout>
+         <Header userRole={role} />
       <h1 className="text-2xl font-bold mb-2 max-w-xl mx-auto">Record a Reflection</h1>
       <form onSubmit={submitData} className="max-w-xl mx-auto">
         {/* STEP 1: Choose Performance */}
@@ -402,7 +474,7 @@ console.log("promptAnswers", promptAnswers)
             <div className="space-y-2 mb-4">
               <label className="block text-(--orange) font-medium">Reaction</label>
             
-              <div className="flex items-center gap-3">
+              <div className="flex flex-wrap items-center gap-3">
              
 {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((num) => (
   <>

@@ -7,9 +7,15 @@ import CollapsedPost from '../../components/CollapsedPost';
 import { getAuth } from '@clerk/nextjs/server';
 
 import { useRouter } from 'next/router';
+import { Role } from '@prisma/client';
+import Header from '../../components/Header';
 
+type UserPr = {
+  id: string;
+  role: Role;
+};
 
-type Props = { posts: PostProps[]; date: string };
+type Props = { posts: PostProps[]; date: string,   userPr: UserPr; };
 
 export const getServerSideProps: GetServerSideProps = async ({ req, res, params }) => {
   const { userId } = getAuth(req);
@@ -22,8 +28,20 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res, params 
         },
       };
     }
+
+
   const dateStr = params?.date as string;
   const day = parseISO(dateStr);
+
+    // Get user role
+const userPr = await prisma.user.findUnique({
+  where: { clerkId: userId },
+  select: { id: true, role: true },
+});
+
+if (!userPr) {
+  return { redirect: { destination: '/sign-in', permanent: false } };
+}
 
   const posts = await prisma.post.findMany({
     where: {
@@ -60,12 +78,12 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res, params 
       : null,
   }));
 
-  return { props: { posts: serializedPosts, date: dateStr } };
+  return { props: { posts: serializedPosts, date: dateStr, userPr: userPr } };
 };
 
-const DayPage: React.FC<Props> = ({ posts, date }) => {
+const DayPage: React.FC<Props> = ({ posts, date, userPr }) => {
   const router = useRouter()
-
+  const role = userPr?.role;
    const formattedPerfDate = date
     ? format(new Date(date), "EEE dd MMM yyyy")
     : null;
@@ -79,6 +97,7 @@ const DayPage: React.FC<Props> = ({ posts, date }) => {
 
   return (
     <Layout>
+       <Header userRole={role}/>
       <h1 className="text-2xl font-bold mb-6">Performances I saw on {formattedPerfDate}</h1>
       {Object.entries(grouped).map(([performance, posts]) => (
         <div key={performance} className="flex flex-col gap-3 mb-4">
