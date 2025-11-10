@@ -110,7 +110,10 @@ const Reflections: React.FC<Props> = ({ myPosts, reflectionsOnMyWork, role }) =>
       <Header userRole={role}/>
       <div className="max-w-4xl mx-auto space-y-12">
         {/* Always show My Reflections */}
-        <MyReflections posts={myPosts} />
+        {(role === "ADMIN" || role === "ATTENDEE") && (
+          <MyReflections posts={myPosts} />
+        )}
+        
 
         {/* Show “Reflections on My Work” for artists/admins */}
         {(role === "ADMIN" || role === "ARTIST") && (

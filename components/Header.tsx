@@ -45,7 +45,7 @@ const userName = user?.username
   }
 
   return (
-    <nav className="flex flex-col items-center justify-between p-4  sticky top-0 bg-(--bg) gap-2 z-2 mb-4">
+    <nav className="flex flex-col items-center justify-between p-4 pt-0  sticky top-0 bg-(--bg) gap-2 z-2 mb-4">
       <div className="flex flex-col">
       {isSignedIn && (
         <span className="w-full text-center text-(--teal) italic">{userName}'s</span>)}
