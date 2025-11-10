@@ -22,7 +22,7 @@ const FilterBar = ({
           <select
             value={selectedPerformance}
             onChange={(e) => setSelectedPerformance(e.target.value)}
-            className="p-2 border rounded-md truncate"
+            className="p-2 border rounded-md truncate max-w-1/2"
           >
             <option value="all">All Performances</option>
             {performances.map((perf) => (
