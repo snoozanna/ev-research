@@ -19,7 +19,7 @@ const rotate = rotations[Math.floor(Math.random() * rotations.length)];
   return (
     <Link
     href={`/p/${post.id}`}
-      className={`p-2  flex flex-row gap-1 bg-(--post-color) size-fit
+      className={`p-2 md:p-4  flex flex-row gap-1 bg-(--post-color) size-fit
  rounded-md shadow-[4px_6px_0px_rgba(0,0,0,0.15)] rotate-2 hover:rotate-0 hover:shadow-[2px_3px_0px_rgba(0,0,0,0.2)] transition-all duration-200`}
       style={{ transform: `rotate(${rotate})` }}
     >

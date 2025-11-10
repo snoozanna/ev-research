@@ -22,11 +22,11 @@ const FilterBar = ({
           <select
             value={selectedPerformance}
             onChange={(e) => setSelectedPerformance(e.target.value)}
-            className="p-2 border rounded-md"
+            className="p-2 border rounded-md truncate"
           >
             <option value="all">All Performances</option>
             {performances.map((perf) => (
-              <option key={perf.id} value={perf.id}>
+              <option key={perf.id} value={perf.id} className="truncate">
                 {perf.name}
               </option>
             ))}

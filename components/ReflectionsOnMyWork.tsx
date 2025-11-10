@@ -18,7 +18,7 @@ const ReflectionsOnMyWork: React.FC<ReflectionsOnMyWorkProps> = ({ posts, role }
     <section className="mb-10">
       <h2 className="text-xl font-bold mb-4">{title}</h2>
       {posts.length > 0 ? (
-        <div className="grid grid-cols-2 gap-6">
+        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-6">
           {posts.map((post) => (
             <CollapsedPostIt key={post.id} post={post} />
           ))}

@@ -45,7 +45,7 @@ const userName = user?.username
   }
 
   return (
-    <nav className="flex flex-col items-center justify-between p-4  sticky top-0 bg-(--bg) gap-2 z-2">
+    <nav className="flex flex-col items-center justify-between p-4  sticky top-0 bg-(--bg) gap-2 z-2 mb-4">
       <div className="flex flex-col">
       {isSignedIn && (
         <span className="w-full text-center text-(--teal) italic">{userName}'s</span>)}
@@ -103,7 +103,7 @@ const userName = user?.username
 
 
        {isSignedIn &&  canSee.create && (
-            <Link href="/create" className="flex items-center font-bold hover:bg-purple-700">
+            <Link href="/create" className="flex items-center font-bold hover:opacity-80">
              
                 <FaPencilAlt size="1.5rem" />
        
@@ -112,7 +112,7 @@ const userName = user?.username
        
 {isSignedIn && (
           <div className="flex items-end">
-           <Link href="/about" className="flex items-center font-bold hover:bg-purple-700">
+           <Link href="/about" className="flex items-center font-bold hover:opacity-80">
              <FaInfoCircle size="1.5rem" />
          </Link>
            

@@ -100,7 +100,7 @@ const DayPage: React.FC<Props> = ({ posts, date, userPr }) => {
        <Header userRole={role}/>
       <h1 className="text-2xl font-bold mb-6">Performances I saw on {formattedPerfDate}</h1>
       {Object.entries(grouped).map(([performance, posts]) => (
-        <div key={performance} className="flex flex-col gap-3 mb-4">
+        <div key={performance} className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-2 gap-6 mb-4">
          
           {posts.map((p) => (
             <CollapsedPost key={p.id} post={p} />

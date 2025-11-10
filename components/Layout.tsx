@@ -27,7 +27,7 @@ const Layout: React.FC<Props> = (props) => {
    <div className={`${krungthep.className}`}>
 
 
-      <div className="p-4 mb-15">{props.children}</div>
+      <div className="max-w-[1080px] mx-auto px-4 py-6">{props.children}</div>
     <div className="fixed bottom-5 right-5 "><UserStatus/></div>
    </div>
 
