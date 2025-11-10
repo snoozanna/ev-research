@@ -30,7 +30,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, params }) =>
      },
     include: {
       author: { select: { firstName: true, email: true } },
-      performance: { select: { id: true, name: true, imageUrl: true } },
+      performance: { select: { id: true, name: true, imageUrl: true, location: true } },
       performanceDate: { select: { id: true, dateTime: true } },
       promptAnswers: {
         include: { prompt: { select: { id: true, text: true } } },
@@ -107,8 +107,8 @@ const ReflectionPage: React.FC<Props> = ({ post }) => {
           </div>
         </div>
       </div>
-      <Link href={`/reflections`}
-      className={`p-2  mb-2  flex flex-row gap-1 `}>{"<-"} Back</Link>
+    
+          <button type="button" className='`p-2  mb-2  flex flex-row gap-1' onClick={() => router.back()}></button>
     </Layout>
   );
 };

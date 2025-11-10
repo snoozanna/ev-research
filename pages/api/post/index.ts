@@ -87,7 +87,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           title: title || "",
           content: content || "",
           voiceNoteUrl: voiceNoteUrl || null,
-          colourRating, // ⭐ new field
+          colourRating,
           performance: performanceId ? { connect: { id: performanceId } } : undefined,
           performanceDate: performanceDateId ? { connect: { id: performanceDateId } } : undefined,
           customName: customName || null,

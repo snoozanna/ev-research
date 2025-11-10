@@ -41,10 +41,23 @@ if (!isAuthenticated) {
       <div className="page">
 
         <main>
-        <h1 className='text-2xl font-bold mb-6 text-(--teal)'>About</h1>
-    <p className='mb-2'>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean eleifend lorem sed diam efficitur, eget feugiat urna fringilla. Vestibulum posuere aliquet nibh ac pharetra. </p>
-   <p className='mb-2'>Aliquam gravida, urna eu volutpat maximus, justo leo lobortis sem, vel blandit nunc massa et turpis. Sed vehicula lectus ut risus suscipit ornare. Proin egestas quis dui non viverra.</p> 
-   <p className='mb-2'>Maecenas in sollicitudin urna. Pellentesque vehicula risus lorem, sit amet facilisis turpis accumsan et. Duis facilisis metus ac nisi dignissim, eget condimentum ipsum tempus.</p>
+      
+<section className='mb-6'>
+  <h2 className='text-2xl font-bold mb-6'>About</h2>
+  <p className='mb-2'>We came up with the idea for <span className='text-(--teal)'>Performance Journal</span> because we thought it would be useful from two different perspectives. As artists, we were curious about how to <span className='text-(--teal)'>gather honest, thoughtful feedback</span> from audiences. As audience members, we wanted a way to <span className='text-(--teal)'>record and reflect on our experiences</span> of live performance.</p>
+  
+  <p className='mb-2'>Although this is an early prototype, we want it to grow into something which offers audience members a meaningful, opt-in journaling practice: a way to build a personal record of art experiences that accumulates over time, similar to platforms like Goodreads but for performance.</p>
+    
+    <p className='mb-2'> And if artists get to receive genuine feedback from their audiences, shared thoughtfully and on the audience’s own schedule - all the better!</p>
+</section>
+<section className='mb-6'>
+
+          <h2 className='text-2xl font-bold mb-6 '>How to</h2>
+        <p className='mb-2'>  You can choose to record your reflection in <span className='text-(--teal)'>written form</span>, as a <span className='text-(--teal)'>voice note</span>, or by responding to <span className='text-(--teal)'>prompts</span> - some created by the artist, others more general.</p>
+  <p className='mb-2'>You’ll receive nudges at timed intervals after seeing a show by email, encouraging you to reflect again once you’ve had a bit more time to digest. </p>
+  <p className='mb-2'>You can make as many entries per show as you like. </p>
+  <p className='mb-2'>You’ll notice a “Share with Artist” Button within each reflection. This will add that reflection to a pool of anonymised entries that the Artist can access. </p>
+      </section>
         </main>
       </div>
 

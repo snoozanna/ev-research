@@ -1,18 +1,20 @@
 import { GetServerSideProps } from 'next';
 import { format, parseISO, startOfDay, endOfDay } from 'date-fns';
 import Layout from '../../components/Layout';
-import Post, { PostProps } from '../../components/Post';
+import { PostProps } from '../../components/Post';
 import prisma from '../../lib/prisma';
 import CollapsedPost from '../../components/CollapsedPost';
 import { getAuth } from '@clerk/nextjs/server';
 import Link from 'next/link';
+import { useRouter } from 'next/router'
 
 
 type Props = { posts: PostProps[]; date: string };
 
 export const getServerSideProps: GetServerSideProps = async ({ req, res, params }) => {
   const { userId } = getAuth(req);
-  
+
+
     if (!userId) {
       return {
         redirect: {
@@ -61,6 +63,8 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res, params 
 };
 
 const DayPage: React.FC<Props> = ({ posts, date }) => {
+  const router = useRouter()
+
    const formattedPerfDate = date
     ? format(new Date(date), "EEE dd MMM yyyy")
     : null;
@@ -74,7 +78,7 @@ const DayPage: React.FC<Props> = ({ posts, date }) => {
 
   return (
     <Layout>
-      <h1 className="text-2xl font-bold mb-6">Reflections I made on{formattedPerfDate}</h1>
+      <h1 className="text-2xl font-bold mb-6">Reflections I made on {formattedPerfDate}</h1>
       {Object.entries(grouped).map(([performance, posts]) => (
         <div key={performance} className="flex flex-col gap-3 mb-4">
          
@@ -83,8 +87,10 @@ const DayPage: React.FC<Props> = ({ posts, date }) => {
           ))}
         </div>
       ))}
-       <Link href={`/calendar`}
-      className={`p-2  mb-2  flex flex-row gap-1 `}>{"<-"} Back</Link>
+    
+       <button type="button" className='`p-2  mb-2  flex flex-row gap-1' onClick={() => router.back()}>
+     {"<-"} Back
+    </button>
     </Layout>
   );
 };

@@ -134,7 +134,7 @@ console.log("promptAnswers", promptAnswers)
       setIsSubmitting(false);
     }
   };
-
+  console.log("oerformances", performances)
   const selectedPerformance = performances.find((p) => p.id === selectedPerformanceId);
 
   return (

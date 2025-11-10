@@ -5,7 +5,8 @@ import Post, { PostProps } from '../../components/Post';
 import prisma from '../../lib/prisma';
 import CollapsedPost from '../../components/CollapsedPost';
 import { getAuth } from '@clerk/nextjs/server';
-import Link from 'next/link';
+
+import { useRouter } from 'next/router';
 
 
 type Props = { posts: PostProps[]; date: string };
@@ -63,6 +64,8 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res, params 
 };
 
 const DayPage: React.FC<Props> = ({ posts, date }) => {
+  const router = useRouter()
+
    const formattedPerfDate = date
     ? format(new Date(date), "EEE dd MMM yyyy")
     : null;
@@ -85,8 +88,10 @@ const DayPage: React.FC<Props> = ({ posts, date }) => {
           ))}
         </div>
       ))}
-       <Link href={`/calendar`}
-      className={`p-2  mb-2  flex flex-row gap-1 `}>{"<-"} Back</Link>
+
+<button type="button" className='`p-2  mb-2  flex flex-row gap-1' onClick={() => router.back()}>
+     {"<-"} Back
+    </button>
     </Layout>
   );
 };

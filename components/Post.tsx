@@ -9,6 +9,7 @@ export type PostProps = {
   performance?: {
     id: string;
     name: string;
+    location: string;
     imageUrl?: string;
   } | null;
   performanceDate?: {
@@ -65,15 +66,18 @@ const Post: React.FC<{ post: PostProps; colour: number }> = ({ post, colour }) =
   const formattedPerfDate = post.performanceDate
    ? format(new Date(post.performanceDate.dateTime), "EEE dd MMM yyyy")
    : null;
+   console.log("post", post)
   return (
     <div className="">
      <div className="w-full flex justify-between items-end">
         <div>
-          <span className="w-full text-center text-(--teal) italic">Performance</span>
-                  <h1 className="text-2xl font-bold uppercase">
+          <span className="w-full text-center italic">Performance</span>
+                  <h1 className="text-2xl font-bold uppercase text-(--teal)  mb-2">
                     {post.performance?.name}
                   </h1>
-         
+                  <h3 className="text-l font-bold ">
+                    {post.performance?.location}
+                  </h3>
             {/* Performance Date */}
             {formattedPerfDate && (
             <span>

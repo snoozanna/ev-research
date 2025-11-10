@@ -2,7 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { GetServerSideProps } from 'next';
 import { getAuth } from '@clerk/nextjs/server';
 import Layout from '../components/Layout';
-import { PostProps, colourEmojis } from '../components/Post';
+import { PostProps } from '../components/Post';
 import prisma from '../lib/prisma';
 import CollapsedPostIt from '../components/CollapsedPostIt';
 import FilterBar from '../components/FilterBar';
@@ -61,11 +61,14 @@ type Props = { myPosts: PostProps[];
 const Reflections: React.FC<Props> = ({ myPosts, isAuthenticated }) => {
 
   const [draftPosts, setDraftPosts] = useState(myPosts);
+  const [showFilters, setShowFilters] = useState(false);
 
   // Filter states
   const [selectedPerformance, setSelectedPerformance] = useState<string>('all');
   const [sharedFilter, setSharedFilter] = useState<'all' | 'shared' | 'not_shared'>('all');
   const [colourFilter, setColourFilter] = useState<number | 'all'>('all');
+  const [reflectionType, setReflectionType] = useState<'all' | 'text' | 'voice' | 'prompt'>('all');
+
 
   // Get unique performances for dropdown
   const performances = useMemo(() => {
@@ -82,22 +85,25 @@ const Reflections: React.FC<Props> = ({ myPosts, isAuthenticated }) => {
   const filteredPosts = useMemo(() => {
     return draftPosts.filter((post) => {
       const matchesPerformance =
-        selectedPerformance === 'all' ||
-        post.performance?.id === selectedPerformance;
+        selectedPerformance === 'all' || post.performance?.id === selectedPerformance;
   
       const matchesShared =
         sharedFilter === 'all' ||
         (sharedFilter === 'shared' && post.shareWithArtist) ||
         (sharedFilter === 'not_shared' && !post.shareWithArtist);
   
-        const matchesColour =
+      const matchesColour =
         colourFilter === 'all' || post.colourRating.toString() === colourFilter.toString();
-         console.log("colourFilter", post)
-       
-      return matchesPerformance && matchesShared && matchesColour;
+  
+      const matchesReflectionType =
+        reflectionType === 'all' ||
+        (reflectionType === 'text' && !!post.content) ||
+        (reflectionType === 'voice' && !!post.voiceNoteUrl) ||
+        (reflectionType === 'prompt' && post.promptAnswers?.length > 0);
+  
+      return matchesPerformance && matchesShared && matchesColour && matchesReflectionType;
     });
-   
-  }, [draftPosts, selectedPerformance, sharedFilter, colourFilter]);
+  }, [draftPosts, selectedPerformance, sharedFilter, colourFilter, reflectionType]);
 
   const deletePost = async (id: string) => {
     const confirmed = window.confirm("Are you sure you want to delete this post?");
@@ -128,8 +134,30 @@ const Reflections: React.FC<Props> = ({ myPosts, isAuthenticated }) => {
       <div className="max-w-3xl mx-auto">
         <h1 className="text-2xl font-bold mb-6">My Reflections</h1>
 
-    <FilterBar selectedPerformance={selectedPerformance}  setSelectedPerformance = {setSelectedPerformance}  performances={performances}  sharedFilter={sharedFilter}  setSharedFilter={setSharedFilter}  setColourFilter={setColourFilter}  colourFilter={colourFilter}/>
+      {/* FILTER TOGGLE BUTTON */}
+<div className="flex justify-end mb-4">
+  <button
+    onClick={() => setShowFilters((prev) => !prev)}
+    className="px-3 py-1 text-sm border rounded-md text-gray-700 hover:bg-gray-100"
+  >
+    {showFilters ? 'Hide Filters' : 'Show Filters'}
+  </button>
+</div>
 
+{/* CONDITIONAL FILTER BAR */}
+{showFilters && (
+  <FilterBar
+    selectedPerformance={selectedPerformance}
+    setSelectedPerformance={setSelectedPerformance}
+    performances={performances}
+    sharedFilter={sharedFilter}
+    setSharedFilter={setSharedFilter}
+    setColourFilter={setColourFilter}
+    colourFilter={colourFilter}
+    reflectionType={reflectionType}
+    setReflectionType={setReflectionType}
+  />
+)}
         {/* POSTS */}
         <main className="space-y-6">
         <div className="grid grid-cols-2 grid-flow-row sm:grid-cols-2 gap-6">
