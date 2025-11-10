@@ -24,8 +24,6 @@ const Header: React.FC<HeaderProps> = ({ userRole }) => {
   const { user, isSignedIn, isLoaded } = useUser();
   const isActive = (pathname: string) => router.pathname === pathname;
 const userName = user?.username
-console.log("userRole", userRole)
-console.log("user", user)
 // TODO 
   // const role = GET ROLE 
 
