@@ -94,8 +94,6 @@ export const getServerSideProps: GetServerSideProps = async ({ req, params }) =>
   return {
     props: {
       post: serializedPost,
-      currentUserId: currentUser.clerkId,
-      role: currentUser.role,
       userPr: currentUser
     },
   };
@@ -104,6 +102,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, params }) =>
 type UserPr = {
   id: string;
   role: Role;
+  clerkId: string;
 };
 
 type Props = {
@@ -115,9 +114,10 @@ const ReflectionPage: React.FC<Props> = ({ post, userPr }) => {
   const router = useRouter();
   const [colour, setColour] = useState<number>(Number(post.colourRating) || 3);
   const role = userPr?.role;
+console.log("userPr", userPr)
 
-
-  const isUserAlsoAuthor = userPr.id === post.author?.clerkId;
+  const isUserAlsoAuthor = userPr.clerkId === post.author?.clerkId;
+  console.log("isUserAlsoAuthor", userPr.clerkId, post.author?.clerkId)
   return (
     <Layout>
       <Header userRole={role}/>
