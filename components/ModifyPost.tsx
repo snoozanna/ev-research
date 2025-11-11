@@ -20,9 +20,9 @@ const ModifyPost = ({post, colour, setColour}) => {
         <>
   {/* Toggles section (only show delete/share if author) */}
         <div className="flex flex-wrap items-center justify-between gap-6 pt-4 border-t">
-          <div className="flex flex-wrap items-center gap-4">
+          {/* <div className="flex flex-wrap items-center gap-4">
             <ColourSelector postId={post.id} colour={colour} onColourChange={setColour} />
-          </div>
+          </div> */}
 
           {/* Only show share + delete buttons if the current user is the author */}
           {post?.author && (

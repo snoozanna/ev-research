@@ -80,7 +80,7 @@ if (!isAuthenticated) {
         <p className='mb-2'>  You can choose to record your reflection in <span className='text-(--teal)'>written form</span>, as a <span className='text-(--teal)'>voice note</span>, or by responding to <span className='text-(--teal)'>prompts</span> - some created by the artist, others more general.</p>
   <p className='mb-2'>You’ll receive nudges at timed intervals after seeing a show by email, encouraging you to reflect again once you’ve had a bit more time to digest. </p>
   <p className='mb-2'>You can make as many entries per show as you like. </p>
-  <p className='mb-6'>You’ll notice a “Share with Artist” Button within each reflection. This will add that reflection to a pool of anonymised entries that the Artist can access. </p>
+  <p className='mb-6'>You’ll notice a <span className='text-(--teal)'>“Share with Artist”</span> Button within each reflection. This will add that reflection to a pool of anonymised entries that the Artist can access. </p>
   <Link href="/create" className="w-full sm:w-1/2 md:w-1/3">
       <button
         type="button"
