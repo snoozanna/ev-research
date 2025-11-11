@@ -25,7 +25,7 @@ const rotate = rotations[Math.floor(Math.random() * rotations.length)];
     >
       <div className="flex w-full gap-2 flex-col">
       <div className="flex w-full gap-2">
-        <div className="w-1/2">
+        <div className="w-1/2 mb-2">
           <Image  
       src={post.performance.imageUrl}
       width={500}
