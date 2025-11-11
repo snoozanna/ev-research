@@ -77,7 +77,7 @@ console.log("post", post)
           )}
       </div>
   </div>
-  <div className="text-xs flex text-right flex-col"><span>Created</span> <span>{daysAgo}</span></div>
+  <div className="text-xs flex text-right flex-col text-(--greyblack)"><span>Created</span> <span>{daysAgo}</span></div>
   
  </div>
   </div>
