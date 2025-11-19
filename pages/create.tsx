@@ -104,28 +104,20 @@ const Draft: React.FC<Props> = ({userPr}) => {
     };
     fetchPerformances();
   }, []);
-  useEffect(() => {
-console.log("audioBlob", audioBlob)
-  }, [audioBlob])
+
   const startRecording = async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-     const options = { mimeType: "audio/webm" };
-     console.log("MediaRecorder", MediaRecorder.isTypeSupported(options.mimeType))
-      if (!MediaRecorder.isTypeSupported(options.mimeType)) {
-        options.mimeType = "audio/mp4"; // fallback for Safari
-      }
-      const mediaRecorder = new MediaRecorder(stream, options);
+      const mediaRecorder = new MediaRecorder(stream);
       mediaRecorderRef.current = mediaRecorder;
       chunksRef.current = [];
 
       mediaRecorder.ondataavailable = (e) => e.data.size > 0 && chunksRef.current.push(e.data);
       mediaRecorder.onstop = () => {
-        const blob = new Blob(chunksRef.current, { type: mediaRecorder.mimeType });
+        const blob = new Blob(chunksRef.current, { type: "audio/webm" });
         setAudioBlob(blob);
         setAudioUrl(URL.createObjectURL(blob));
         stream.getTracks().forEach((t) => t.stop());
-
       };
 
       mediaRecorder.start();
@@ -135,6 +127,7 @@ console.log("audioBlob", audioBlob)
       alert("Could not access microphone.");
     }
   };
+
 
   const stopRecording = () => {
     if (mediaRecorderRef.current && isRecording) {
@@ -425,13 +418,8 @@ console.log("audioBlob", audioBlob)
                 {audioUrl ? 
               (
                 <div className="flex items-center gap-2">
-                  {/* <audio controls src={audioUrl} className="flex-1" /> */}
-                  <audio controls className="w-full max-w-md rounded-lg mb-6">
-  <source src={audioUrl} type="audio/mp4" />
-  <source src={audioUrl} type="audio/webm" />
-  <source src={audioUrl} type="audio/ogg" />
-  Your browser does not support the audio element.
-</audio>
+                  <audio controls src={audioUrl} className="flex-1" />
+                
                   <button
                     type="button"
                     onClick={clearRecording}
