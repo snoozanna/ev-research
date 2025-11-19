@@ -103,7 +103,9 @@ const userName = user?.username
 
 
        {isSignedIn &&  canSee.create && (
-            <Link href="/create" className="flex items-center font-bold hover:opacity-80">
+            <Link href="/create" className={`flex items-center font-bold ${
+              isActive("/create")  ? "text-(--icon-active)": "opacity-100"
+            } hover:opacity-80`}>
              
                 <FaPencilAlt size="1.5rem" />
        
@@ -112,7 +114,9 @@ const userName = user?.username
        
 {isSignedIn && (
           <div className="flex items-end">
-           <Link href="/about" className="flex items-center font-bold hover:opacity-80">
+           <Link href="/about" className={`flex items-center font-bold ${
+              isActive("/about")  ? "text-(--icon-active)": "opacity-100"
+            } hover:opacity-80`}>
              <FaInfoCircle size="1.5rem" />
          </Link>
            

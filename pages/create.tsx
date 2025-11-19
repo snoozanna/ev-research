@@ -88,7 +88,7 @@ const Draft: React.FC<Props> = ({userPr}) => {
 
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const chunksRef = useRef<Blob[]>([]);
-console.log("promptAnswers", promptAnswers)
+
   useEffect(() => {
     const fetchPerformances = async () => {
       try {
@@ -104,11 +104,17 @@ console.log("promptAnswers", promptAnswers)
     };
     fetchPerformances();
   }, []);
-
+  useEffect(() => {
+console.log("audioBlob", audioBlob)
+  }, [audioBlob])
   const startRecording = async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      const mediaRecorder = new MediaRecorder(stream);
+     const options = { mimeType: "audio/webm" };
+      if (!MediaRecorder.isTypeSupported(options.mimeType)) {
+        options.mimeType = "audio/mp4"; // fallback for Safari
+      }
+      const mediaRecorder = new MediaRecorder(stream, options);
       mediaRecorderRef.current = mediaRecorder;
       chunksRef.current = [];
 
@@ -118,6 +124,7 @@ console.log("promptAnswers", promptAnswers)
         setAudioBlob(blob);
         setAudioUrl(URL.createObjectURL(blob));
         stream.getTracks().forEach((t) => t.stop());
+
       };
 
       mediaRecorder.start();
@@ -418,6 +425,12 @@ console.log("promptAnswers", promptAnswers)
               (
                 <div className="flex items-center gap-2">
                   <audio controls src={audioUrl} className="flex-1" />
+                  <audio controls preload="none" className="w-full max-w-md rounded-lg mb-6">
+  <source src={audioUrl} type="audio/mp4" />
+  <source src={audioUrl} type="audio/webm" />
+  <source src={audioUrl} type="audio/ogg" />
+  Your browser does not support the audio element.
+</audio>
                   <button
                     type="button"
                     onClick={clearRecording}
