@@ -88,6 +88,8 @@ const Draft: React.FC<Props> = ({userPr}) => {
 
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const chunksRef = useRef<Blob[]>([]);
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const MAX_DURATION = 180000; 
 
   useEffect(() => {
     const fetchPerformances = async () => {
@@ -411,7 +413,7 @@ const Draft: React.FC<Props> = ({userPr}) => {
               </div>
             )}
 
-            {mode === "voice" && (
+{mode === "voice" && (
               <div className="space-y-2">
                 <h3 className="text-lg font-semibold text-(--orange)">Voice Note</h3>
                
@@ -419,7 +421,6 @@ const Draft: React.FC<Props> = ({userPr}) => {
               (
                 <div className="flex items-center gap-2">
                   <audio controls src={audioUrl} className="flex-1" />
-                
                   <button
                     type="button"
                     onClick={clearRecording}
