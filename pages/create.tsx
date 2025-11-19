@@ -111,6 +111,7 @@ console.log("audioBlob", audioBlob)
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
      const options = { mimeType: "audio/webm" };
+     console.log("MediaRecorder", MediaRecorder.isTypeSupported(options.mimeType))
       if (!MediaRecorder.isTypeSupported(options.mimeType)) {
         options.mimeType = "audio/mp4"; // fallback for Safari
       }
