@@ -113,14 +113,20 @@ const AnnoymousPost: React.FC<{ post: PostProps; colour: number }> = ({ post, co
           onClick={(e) => e.stopPropagation()}
         >
           <h3 className="text-xl font-semibold mb-4 text-(--teal)">Voice Note</h3>
-          <audio
+          {/* <audio
             controls
             preload="none"
             className="w-full max-w-md rounded-lg mb-6"
           >
             <source src={post.voiceNoteUrl} type="audio/mpeg" />
             Your browser does not support the audio element.
-          </audio>
+          </audio> */}
+           <audio controls preload="none" className="w-full max-w-md rounded-lg mb-6">
+  <source src={post.voiceNoteUrl} type="audio/mp4" />
+  <source src={post.voiceNoteUrl} type="audio/webm" />
+  <source src={post.voiceNoteUrl} type="audio/ogg" />
+  Your browser does not support the audio element.
+</audio>
         </div>
       )}
 
