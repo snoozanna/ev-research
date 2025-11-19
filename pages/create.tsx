@@ -120,7 +120,7 @@ console.log("audioBlob", audioBlob)
 
       mediaRecorder.ondataavailable = (e) => e.data.size > 0 && chunksRef.current.push(e.data);
       mediaRecorder.onstop = () => {
-        const blob = new Blob(chunksRef.current, { type: "audio/webm" });
+        const blob = new Blob(chunksRef.current, { type: mediaRecorder.mimeType });
         setAudioBlob(blob);
         setAudioUrl(URL.createObjectURL(blob));
         stream.getTracks().forEach((t) => t.stop());
