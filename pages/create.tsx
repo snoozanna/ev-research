@@ -425,7 +425,7 @@ console.log("audioBlob", audioBlob)
               (
                 <div className="flex items-center gap-2">
                   {/* <audio controls src={audioUrl} className="flex-1" /> */}
-                  <audio controls preload="none" className="w-full max-w-md rounded-lg mb-6">
+                  <audio controls className="w-full max-w-md rounded-lg mb-6">
   <source src={audioUrl} type="audio/mp4" />
   <source src={audioUrl} type="audio/webm" />
   <source src={audioUrl} type="audio/ogg" />
